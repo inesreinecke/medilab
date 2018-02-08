@@ -1,0 +1,40 @@
+group: bluezone
+language: node_js
+node_js:
+- '6'
+env:
+  global:
+  - OCTOKIT_API_ENDPOINT="https://github.ibm.com/api/v3/"
+  
+before_deploy:
+deploy:
+- provider: cloudfoundry
+  skip_cleanup: true
+  api: api.w3ibm.bluemix.net
+  manifest: manifest-dev-cio.yml
+  username: $BLUEMIX_USER
+  password: $BLUEMIX_PASSWORD
+  organization: $BLUEMIX_ORGANIZATION
+  space: $BLUEMIX_DEV_SPACE
+  on:
+    branch: dev
+- provider: cloudfoundry
+  skip_cleanup: true
+  api: api.w3ibm.bluemix.net
+  manifest: manifest-test-cio.yml
+  username: $BLUEMIX_USER
+  password: $BLUEMIX_PASSWORD
+  organization: $BLUEMIX_ORGANIZATION
+  space: $BLUEMIX_TEST_SPACE
+  on:
+    branch: test
+- provider: cloudfoundry
+  skip_cleanup: true
+  api: api.w3ibm.bluemix.net
+  manifest: manifest-prod-cio.yml
+  username: $BLUEMIX_USER
+  password: $BLUEMIX_PASSWORD
+  organization: $BLUEMIX_ORGANIZATION
+  space: $BLUEMIX_PROD_SPACE
+  on:
+    branch: master

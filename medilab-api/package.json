@@ -1,0 +1,60 @@
+{
+  "name": "medilab-api",
+  "description": "",
+  "version": "0.0.0",
+  "homepage": "",
+  "main": "src",
+  "keywords": [
+    "MediLab"
+  ],
+  "author": {
+    "name": "Ines Reinecke",
+    "email": "ines.reinecke@de.ibm.com"
+  },
+  "contributors": [],
+  "bugs": {},
+  "directories": {
+    "lib": "src",
+    "test": "test/"
+  },
+  "engines": {
+    "node": "^8.0.0",
+    "yarn": ">= 0.18.0"
+  },
+  "scripts": {
+    "test": "yarn run eslint && yarn run mocha",
+    "eslint": "eslint src/. test/. --config .eslintrc.json",
+    "start": "node src/",
+    "dev": "NODE_ENV=development node src/",
+    "mocha": "mocha test/ --recursive --exit",
+    "deploy": "bx cf push medilab-api",
+    "deploy-test": "bx cf push medilab-api-test",
+    "deploy-dev": "bx cf push medilab-api-dev"
+  },
+  "dependencies": {
+    "@feathersjs/configuration": "1.0.2",
+    "@feathersjs/errors": "3.2.1",
+    "@feathersjs/express": "1.1.2",
+    "@feathersjs/feathers": "3.0.5",
+    "@feathersjs/socketio": "3.0.2",
+    "apollo-server-express": "1.3.2",
+    "compression": "1.7.1",
+    "cors": "2.8.4",
+    "express-session": "1.15.6",
+    "graphql": "0.12.3",
+    "graphql-subscriptions": "0.5.6",
+    "graphql-tools": "2.18.0",
+    "helmet": "3.9.0",
+    "passport": "0.4.0",
+    "passport-idaas-openidconnect": "2.0.1",
+    "serve-favicon": "2.4.5",
+    "subscriptions-transport-ws": "0.9.5",
+    "winston": "2.4.0"
+  },
+  "devDependencies": {
+    "eslint": "4.15.0",
+    "mocha": "4.1.0",
+    "request": "2.83.0",
+    "request-promise": "4.2.2"
+  }
+}

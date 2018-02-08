@@ -1,0 +1,5 @@
+---
+applications:
+ - name: medilab-api
+   random-route: false
+   memory: 1024M

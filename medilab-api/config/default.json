@@ -1,0 +1,24 @@
+{
+  "host": "localhost",
+  "port": 3000,
+  "public": "../public/",
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "w3id": {
+    "authorizationURL": "https://w3id.alpha.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/authorize",
+    "tokenURL": "https://w3id.alpha.sso.ibm.com/isam/oidc/endpoint/amapp-runtime-oidcidp/token",
+    "clientID": "M2E4ZjcxM2EtODEwNC00",
+    "scope": "openid",
+    "response_type": "code",
+    "clientSecret": "Y2JjZmJmZGYtZTI4MC00",
+    "callbackURL": "https://medilab-api.mybluemix.net/w3id/callback",
+    "skipUserProfile": "true",
+    "issuer": "https://w3id.alpha.sso.ibm.com/isam",
+    "addCACert": "true",
+    "CACertPathList": [
+      "/certs/oidc_w3id_staging.cer"
+    ]
+  }
+}

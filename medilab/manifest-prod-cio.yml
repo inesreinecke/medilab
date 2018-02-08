@@ -1,0 +1,7 @@
+applications:
+- memory: 1024M
+  instances: 1
+  domain: mybluemix.net
+  name: medilab
+  disk_quota: 1024M
+  buildpack: staticfile_buildpack

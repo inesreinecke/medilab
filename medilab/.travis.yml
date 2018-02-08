@@ -1,0 +1,43 @@
+group: bluezone
+language: node_js
+node_js:
+- '6'
+env:
+  global:
+  - OCTOKIT_API_ENDPOINT="https://github.ibm.com/api/v3/"
+notifications:
+    slack:
+      secure: "EwFuO2SLVQyUg4dLrXKgQuF0NTH7rv/iU5LzdtpDaXvXlUHKABtFK6rmyUeePRqE/4Y/diI5Suxwq5nr1NRI9KRhXR2LTtbUvjsZkqlVDPOyk06SxVBwA6p/2w0NbfQPAWfqsHhTX5w2wIxeqU8UteXqZMiR6wYOfdYVP8m47jlF/a5e6gUInrzVUttbm5oUwc0y7pzyUsiVfyu4XjrLYYM0c2/NOFomveU3OZW1UWyVovpOHdL7sDmt5ETfygaF2rIEqtVuIOZMOfFXJMwSb6MWKx5FqLzOZT7XJQOMwyNLW+xa+dMTftN3LUdx4+yPpw/jsQfa+WIHDo7MCdLcWl/DabDrVITZXdpkPOgrn6xzywnXGW7OR5fZTau3VKi1PnnuILgAdISH26FyW3LH6DQqr9nw7KZGAaIPjeDfrvHB2MnY+rzAeOlNQlJU2zbbwlFPNYYRvzSEz5LLxdPBVGewr78wteiYSEmO8yrnqA1eyozuGPHm3UqfE2AgF7GvqpjUaLObylKsXpvQS21jkNxQ5UIMJAJijik4uzCUuQK47uo4cC2oQVKBAwVNyXZ3IgU2lVYX6eCYW6iYqwDAW3eb+pgNSQwpie9ChQhCxCW+EWpCDcyEwma5aist7gvRJwL44a+ZJriz7aXeRFTeVqwjEJ5rE2sv81u8rA4lzSQ="
+
+before_deploy:
+deploy:
+- provider: cloudfoundry
+  skip_cleanup: true
+  api: api.w3ibm.bluemix.net
+  manifest: manifest-dev-cio.yml
+  username: $BLUEMIX_USER
+  password: $BLUEMIX_PASSWORD
+  organization: $BLUEMIX_ORGANIZATION
+  space: $BLUEMIX_DEV_SPACE
+  on:
+    branch: dev
+- provider: cloudfoundry
+  skip_cleanup: true
+  api: api.w3ibm.bluemix.net
+  manifest: manifest-test-cio.yml
+  username: $BLUEMIX_USER
+  password: $BLUEMIX_PASSWORD
+  organization: $BLUEMIX_ORGANIZATION
+  space: $BLUEMIX_TEST_SPACE
+  on:
+    branch: test
+- provider: cloudfoundry
+  skip_cleanup: true
+  api: api.w3ibm.bluemix.net
+  manifest: manifest-prod-cio.yml
+  username: $BLUEMIX_USER
+  password: $BLUEMIX_PASSWORD
+  organization: $BLUEMIX_ORGANIZATION
+  space: $BLUEMIX_PROD_SPACE
+  on:
+    branch: master

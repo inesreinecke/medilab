@@ -1,0 +1,14 @@
+{
+  "name": "medilab",
+  "short_name": "MediLab",
+  "icons": [
+    {
+      "src": "/static/img/logo.png",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#4DBA87"
+}
