@@ -16,12 +16,20 @@
     </div>
 
      <div class="wrapper">
-        <div class="card" v-for="(item, index) of Rooms">
-          <div class="body" v-bind:style="{backgroundColor:item.bgColor}">
-            <h3><b>{{item.title}}</b></h3> 
-          </div>
-          <div class="footer">
-            <p>{{item.leader}}</p> 
+        <div class="card" v-for="(room, index) of Rooms">
+          <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
+            <h3><b>{{room.title}}</b></h3> 
+
+           
+            <div class="avatar-circle">
+              <span class="initials">TR</span>
+            </div>
+            <div class="avatar-circle">
+              <span class="initials">IR</span>
+            </div>
+            <!-- <div class="round" v-for="(patient, index) of room.allocation">
+              <p>{{patient.initials}}</p>
+            </div> -->
           </div>
         </div>
 
@@ -92,7 +100,16 @@ export default {
             id
             title
             bgColor
-            capacity
+            capacity,
+            allocation {
+              id
+              patient {
+                id
+                initials
+                firstName
+                lastName
+              }
+            }
           }
         }`,
         variables: {
@@ -148,11 +165,37 @@ export default {
     vertical-align: middle;
 }
 
+.card .full {
+    padding: 2px 16px;
+    height:100%
+}
 
 .wrapper {
     position: relative;
     display: flex;
     flex-flow: row wrap;
+}
+
+
+
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  background-color: #000;
+  text-align: center;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+}
+
+.initials {
+  position: relative;
+  top: 12px; /* 25% of parent */
+  font-size: 25px; /* 50% of parent */
+  line-height: 25px; /* 50% of parent */
+  color: #fff;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
 }
 
 </style>

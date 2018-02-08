@@ -19,6 +19,24 @@ const typeDefinitions = `
     title: String
     bgColor: String
     capacity: Int
+    allocation: [Allocation]
+  }
+
+  type Patient {
+    id: ID!
+    serial : String!
+    firstName: String
+    lastName: String
+    initials: String
+    birthday: String
+    sex: String
+  }
+
+  type Allocation {
+    id: ID!
+    _stationId: ID!
+    _roomId: ID!
+    patient: Patient
   }
 
   type Query {

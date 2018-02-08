@@ -17,6 +17,26 @@ var stationCache = [
   },
 ];
 
+var patientsCache = [
+  {
+    id: 1,
+    serial: 'tr19790923',
+    firstName: 'Thomas',
+    lastName: 'Reinecke',
+    initials: 'TR',
+    birthday: '1979-09-23',
+    sex: 'male'
+  },
+  {
+    id: 2,
+    serial: 'ir19810105',
+    firstname: 'Ines',
+    lastName: 'Reinecke',
+    initials: 'IR',
+    birthday: '1981-01-05',
+    sex: 'female'
+  },
+];
 
 var roomsCache = [
   {
@@ -24,21 +44,7 @@ var roomsCache = [
     _stationId: 1,
     title: '1-001',
     bgColor: '#dc67ff',
-    capacity: 4,
-    allocation: [
-      {
-        id: 1,
-        lastName: 'Reinecke',
-        firstName: 'Thomas',
-        initials: 'TR'
-      },
-      {
-        id: 2,
-        lastName: 'Reinecke',
-        firstName: 'Thomas',
-        initials: 'TR'
-      }
-    ]
+    capacity: 4
   },
   {
     id: 2,
@@ -90,6 +96,16 @@ var roomsCache = [
   }
 ];
 
+var allocationCache = [
+  {
+    id: 1,
+    _stationId: 1,
+    _roomId: 1,
+    patientSerial: 'tr19790923' 
+  }
+];
+
+
 
 var issueCache = [
   {
@@ -136,10 +152,30 @@ module.exports = function () {
       RoomsByStation (root, {_stationId}, context) {
         let selectedRooms = [];
         for (room of roomsCache) {
-          if(room._stationId == _stationId) selectedRooms.push(room);
+          if(room._stationId == _stationId) {
+
+            // now walk through all rooms and add their respective allocation
+            for (alloc of allocationCache) {
+              if(alloc._roomId == room.id) {
+                if(room.allocation == null) room.allocation = [];
+
+                // lookup the patient and merge its
+                for (patient of patientsCache) {
+                  if(alloc.patientSerial == patient.serial) {
+                    alloc.patient = patient;
+                  }
+                }
+
+                room.allocation.push(alloc);
+              }
+            }
+            selectedRooms.push(room);
+          } 
         }
+
         return selectedRooms;
       }
+      
     },
     Mutation: {
       addIssue(root, { id, title, status }, context) {
