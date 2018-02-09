@@ -102,6 +102,12 @@ var allocationCache = [
     _stationId: 1,
     _roomId: 1,
     patientSerial: 'tr19790923' 
+  },
+  {
+    id: 2,
+    _stationId: 1,
+    _roomId: 1,
+    patientSerial: 'ir19810105' 
   }
 ];
 
@@ -151,7 +157,8 @@ module.exports = function () {
       },
       RoomsByStation (root, {_stationId}, context) {
         let selectedRooms = [];
-        for (room of roomsCache) {
+        for (origRoom of roomsCache) {
+          var room = JSON.parse(JSON.stringify(origRoom));
           if(room._stationId == _stationId) {
 
             // now walk through all rooms and add their respective allocation

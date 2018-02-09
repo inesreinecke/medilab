@@ -5,7 +5,7 @@
       <div class="wrapper">
 
 
-        <div class="card" v-for="(item, index) of Stations" v-on:click="selectStation($event, item)">
+        <div class="card" v-for="(item) of Stations" v-bind:key="item.id" v-on:click="selectStation($event, item)">
           <div class="body" v-bind:style="{backgroundColor:item.bgColor}">
             <h3><b>{{item.title}}</b></h3> 
           </div>
@@ -16,23 +16,35 @@
     </div>
 
      <div class="wrapper">
-        <div class="card" v-for="(room, index) of Rooms">
+        <div class="card" v-for="(room) in Rooms" v-bind:key="room.id">
           <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
             <h3><b>{{room.title}}</b></h3> 
 
            
-            <div class="avatar-circle">
-              <span class="initials">TR</span>
+            <!-- <div class="box">
+              <div class="avatar-circle">
+                <span class="initials">TR</span>
+              </div>
             </div>
-            <div class="avatar-circle">
-              <span class="initials">IR</span>
+            <div class="box">
+              <div class="avatar-circle">
+                <span class="initials">IR</span>
+              </div>
             </div>
-            <!-- <div class="round" v-for="(patient, index) of room.allocation">
-              <p>{{patient.initials}}</p>
+
+                        <div class="box">
+              <div class="avatar-circle">
+                <span class="initials">IR</span>
+              </div>
             </div> -->
+            
+            <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id">
+              <div class="avatar-circle">
+                <span class="initials">{{patient.patient.initials}}</span>
+              </div> 
+            </div>
           </div>
         </div>
-
       </div>
 
     </div>
@@ -196,6 +208,13 @@ export default {
   color: #fff;
   font-family: "Courier New", monospace;
   font-weight: bold;
+}
+
+.box {
+    box-sizing: border-box;
+    float: left;
+    padding: 5px;
+    border: 0px solid black;
 }
 
 </style>
