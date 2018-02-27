@@ -18,13 +18,20 @@
       </nav>
 
       <router-view></router-view>
+      <sidebar></sidebar>
+
     </main>
   </div>
 </template>
 
 <script>
+import Sidebar from '@/components/Sidebar'
+
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    Sidebar
+  }
 }
 </script>
 

@@ -47,15 +47,21 @@ const typeDefinitions = `
     StationById(id: ID!): Station,
     
     Rooms : [Room],
-    RoomsByStation(_stationId: ID!): [Room]
+    RoomsByStation(_stationId: ID!): [Room],
+
+    Allocation : [Allocation], 
+
+    Patients : [Patient]
   }
 
   type Mutation {
-    addIssue(id: ID!, title: String!, status: String): Issue
+    addIssue(id: ID!, title: String!, status: String): Issue,
+    checkinPatient(_stationId: ID!, _roomId: ID!, patientSerial: String!): [Room]
   }
 
   type Subscription {
-    Issues: [Issue]
+    Issues: [Issue],
+    Rooms: [Room]
   }
 
   schema {

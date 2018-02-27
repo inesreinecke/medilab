@@ -2,43 +2,23 @@
   <section class="viewCard">
     <div class="viewCardBody">
 
-      <div class="wrapper">
-
-
-        <div class="card" v-for="(item) of Stations" v-bind:key="item.id" v-on:click="selectStation($event, item)">
-          <div class="body" v-bind:style="{backgroundColor:item.bgColor}">
-            <h3><b>{{item.title}}</b></h3> 
+      <div class="row">
+        <div class="card" v-for="(station) of Stations" v-bind:key="station.id" v-on:click="selectStation($event, station)">
+          <div class="body" v-bind:style="{backgroundColor:station.bgColor}">
+            <h3><b>{{station.title}}</b></h3> 
           </div>
           <div class="footer">
-            <p>{{item.leader}}</p> 
+            <p>{{station.leader}}</p> 
           </div>
         </div>
     </div>
 
-     <div class="wrapper">
-        <div class="card" v-for="(room) in Rooms" v-bind:key="room.id">
+     <div class="row">
+        <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click="selectRoom($event, room)">
           <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
             <h3><b>{{room.title}}</b></h3> 
 
-           
-            <!-- <div class="box">
-              <div class="avatar-circle">
-                <span class="initials">TR</span>
-              </div>
-            </div>
-            <div class="box">
-              <div class="avatar-circle">
-                <span class="initials">IR</span>
-              </div>
-            </div>
-
-                        <div class="box">
-              <div class="avatar-circle">
-                <span class="initials">IR</span>
-              </div>
-            </div> -->
-            
-            <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id">
+            <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click="selectPatient($event, patient)">
               <div class="avatar-circle">
                 <span class="initials">{{patient.patient.initials}}</span>
               </div> 
@@ -60,9 +40,7 @@ export default {
   data () {
     return {
       Stations: [],
-      selectedStation: null,
-      Rooms: [],
-      selectedRoom: null
+      Rooms: []
     }
   },
   apollo: {
@@ -79,6 +57,29 @@ export default {
         result ({data}) {
           console.log(JSON.stringify(data))
           this.Issues = data.Issues
+        }
+      },
+      Rooms: {
+        query: gql`subscription rooms {
+          Rooms {
+            id
+            title
+            bgColor
+            capacity,
+            allocation {
+              id
+              patient {
+                id
+                initials
+                firstName
+                lastName
+              }
+            }
+          }
+        }`,
+        result ({data}) {
+          console.log(JSON.stringify(data))
+          this.Rooms = data.Rooms
         }
       }
     }
@@ -101,9 +102,9 @@ export default {
     })
   },
   methods: {
-    selectStation: function (event, item) {
-      // `this` inside methods points to the Vue instance
-      this.selectedStation = item
+    selectStation: function (event, station) {
+      // send event to sidebar
+      this.$eventHub.$emit('station-selected', station)
 
       // query rooms for this station
       this.$apollo.query({
@@ -125,7 +126,7 @@ export default {
           }
         }`,
         variables: {
-          _stationId: this.selectedStation.id
+          _stationId: station.id
         }
       }
       ).then(({data}) => {
@@ -134,19 +135,18 @@ export default {
       }).catch((error) => {
         console.error(error)
       })
+    },
+    selectRoom: function (event, room) {
+      this.$eventHub.$emit('room-selected', room)
+    },
+    selectPatient: function (event, patient) {
+      this.$eventHub.$emit('patient-selected', patient)
     }
   }
 }
 </script>
 
 <style>
-
-.row {
-  display:inline;
-  overflow: hidden;
-  border: solid 1px red;
-}
-
 .card {
     /* Add shadows to create the "card" effect */
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -158,7 +158,7 @@ export default {
 
 /* On mouse-over, add a deeper shadow */
 .card:hover {
-  opacity: 0.75;
+  opacity: 0.5;
 }
 
 /** box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); **/
@@ -179,10 +179,10 @@ export default {
 
 .card .full {
     padding: 2px 16px;
-    height:100%
+    height:100%;
 }
 
-.wrapper {
+.row {
     position: relative;
     display: flex;
     flex-flow: row wrap;
@@ -215,6 +215,11 @@ export default {
     float: left;
     padding: 5px;
     border: 0px solid black;
+}
+
+/* On mouse-over, add a deeper shadow */
+.box:hover {
+  opacity: 0.5;
 }
 
 </style>

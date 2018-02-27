@@ -1,6 +1,7 @@
 const { PubSub } = require('graphql-subscriptions');
 const pubsub = new PubSub();
 const ISSUE_ADDED = 'ISSUE_ADDED';
+const ROOMS_CHANGED = 'ROOMS_CHANGED';
 
 var stationCache = [
   {
@@ -30,10 +31,19 @@ var patientsCache = [
   {
     id: 2,
     serial: 'ir19810105',
-    firstname: 'Ines',
+    firstName: 'Ines',
     lastName: 'Reinecke',
     initials: 'IR',
     birthday: '1981-01-05',
+    sex: 'female'
+  },
+  {
+    id: 3,
+    serial: 'ar20081205',
+    firstName: 'Anna',
+    lastName: 'Reinecke',
+    initials: 'AR',
+    birthday: '2008-12-05',
     sex: 'female'
   },
 ];
@@ -134,6 +144,33 @@ var issueCache = [
   }
 ]; 
 
+var getRoomsByStation = function(_stationId) {
+  let selectedRooms = [];
+  for (let origRoom of roomsCache) {
+    var room = JSON.parse(JSON.stringify(origRoom));
+    if(room._stationId == _stationId) {
+
+      // now walk through all rooms and add their respective allocation
+      for (let alloc of allocationCache) {
+        if(alloc._roomId == room.id) {
+          if(room.allocation == null) room.allocation = [];
+
+          // lookup the patient and merge its
+          for (let patient of patientsCache) {
+            if(alloc.patientSerial == patient.serial) {
+              alloc.patient = patient;
+            }
+          }
+
+          room.allocation.push(alloc);
+        }
+      }
+      selectedRooms.push(room);
+    } 
+  }
+  return selectedRooms;
+}
+
 module.exports = function () {
   return {
     Query: {
@@ -156,32 +193,26 @@ module.exports = function () {
         return roomsCache;
       },
       RoomsByStation (root, {_stationId}, context) {
-        let selectedRooms = [];
-        for (origRoom of roomsCache) {
-          var room = JSON.parse(JSON.stringify(origRoom));
-          if(room._stationId == _stationId) {
-
-            // now walk through all rooms and add their respective allocation
-            for (alloc of allocationCache) {
-              if(alloc._roomId == room.id) {
-                if(room.allocation == null) room.allocation = [];
-
-                // lookup the patient and merge its
-                for (patient of patientsCache) {
-                  if(alloc.patientSerial == patient.serial) {
-                    alloc.patient = patient;
-                  }
-                }
-
-                room.allocation.push(alloc);
-              }
+        return getRoomsByStation(_stationId);
+      },
+      Allocation (root, args, context) {
+        let enrichedAllocations = [];
+        for (let allocation of allocationCache) {
+          let enrichedAllocation = JSON.parse(JSON.stringify(allocation));
+          // lookup the patient and merge its
+          for (let patient of patientsCache) {
+            if(enrichedAllocation.patientSerial == patient.serial) {
+              enrichedAllocation.patient = patient;
             }
-            selectedRooms.push(room);
-          } 
+          }
+          enrichedAllocations.push(enrichedAllocation);
         }
 
-        return selectedRooms;
-      }
+        return enrichedAllocations;
+      },
+      Patients (root, args, context) {
+        return patientsCache;
+      },
       
     },
     Mutation: {
@@ -201,10 +232,53 @@ module.exports = function () {
 
         return issue;
       },
+      checkinPatient(root, {_stationId, _roomId, patientSerial }, context) {
+        let newAllocation = {};
+
+        // first lookup the patient 
+        let localPatient = null;
+        for (let patient of patientsCache) {
+          if(patientSerial == patient.serial) {
+            localPatient = patient;
+          }
+        }
+        // console.log(JSON.stringify(localPatient));
+        if(localPatient != null) {
+          
+          // remove the patient from any maybe existing allocation
+          let id = 0;
+          for (let alloc of allocationCache) {
+            if(alloc.id >= id) id = alloc.id;
+            if(alloc.patientSerial == patientSerial) {
+              allocationCache = allocationCache.filter(patient => patient.patientSerial != patientSerial);
+            }
+          }
+          id += 1;
+          // console.log(JSON.stringify(allocationCache));
+
+          newAllocation = {
+            id,
+            _stationId,
+            _roomId,
+            patientSerial,
+          };
+          allocationCache.push(newAllocation);
+          newAllocation.patient = localPatient;
+
+        }
+
+        let currentRoomsByStation = getRoomsByStation(_stationId);
+        pubsub.publish(ROOMS_CHANGED, {Rooms: currentRoomsByStation});
+
+        return currentRoomsByStation;
+      },
     },
     Subscription: {
       Issues: {
         subscribe: () => pubsub.asyncIterator(ISSUE_ADDED),
+      },
+      Rooms: {
+        subscribe: () => pubsub.asyncIterator(ROOMS_CHANGED),
       }
     }
   };
