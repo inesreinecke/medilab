@@ -17,7 +17,7 @@
     </div>
 
     <div v-if="sidebarData.selectedPatient">
-      <h3>Patient: {{sidebarData.selectedPatient.patient.firstName + " " + sidebarData.selectedPatient.patient.lastName}}</h3>
+      <h3>Patient: {{sidebarData.selectedPatient.firstName + " " + sidebarData.selectedPatient.lastName}}</h3>
     </div>
   </div>
 
@@ -46,6 +46,11 @@ export default {
     console.log('sidebar created')
 
     // Listen for the i-got-clicked event and its payload.
+    this.$eventHub.$on('resetSidebar', item => {
+      this.sidebarData.selectedStation = null
+      this.sidebarData.selectedRoom = null
+      this.sidebarData.selectedPatient = null
+    })
     this.$eventHub.$on('station-selected', item => {
       this.sidebarData.selectedStation = item
       // this.sidebarData.selectedRoom = null
@@ -57,7 +62,7 @@ export default {
     })
     this.$eventHub.$on('patient-selected', item => {
       this.sidebarData.selectedPatient = item
-      // console.log(item)
+      console.log(item)
     })
   },
   mounted () {

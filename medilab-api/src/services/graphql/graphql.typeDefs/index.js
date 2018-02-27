@@ -56,12 +56,14 @@ const typeDefinitions = `
 
   type Mutation {
     addIssue(id: ID!, title: String!, status: String): Issue,
-    checkinPatient(_stationId: ID!, _roomId: ID!, patientSerial: String!): [Room]
+    checkinPatient(_stationId: ID!, _roomId: ID!, patientSerial: String!): [Room],
+    addNewPatient(firstName: String!, lastName: String!, birthday: String!, sex: String!): [Patient]
   }
 
   type Subscription {
     Issues: [Issue],
-    Rooms: [Room]
+    Rooms: [Room],
+    Patients: [Patient]
   }
 
   schema {

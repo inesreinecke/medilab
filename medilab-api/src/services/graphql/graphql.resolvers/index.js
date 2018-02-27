@@ -2,6 +2,7 @@ const { PubSub } = require('graphql-subscriptions');
 const pubsub = new PubSub();
 const ISSUE_ADDED = 'ISSUE_ADDED';
 const ROOMS_CHANGED = 'ROOMS_CHANGED';
+const PATIENTS_CHANGED = 'PATIENTS_CHANGED';
 
 var stationCache = [
   {
@@ -272,6 +273,35 @@ module.exports = function () {
 
         return currentRoomsByStation;
       },
+      addNewPatient(root, {firstName, lastName, birthday, sex }, context) {
+
+        // create some props we need to create the patient (like initials and serial)
+        let initials = firstName.toLowerCase().substring(0,1) + lastName.toLowerCase().substring(0,1);
+        let cutBirthday = birthday.replace(/-/g,'');
+        let serial = initials + cutBirthday;
+        console.log('initials ' + initials + ' firstName ' + firstName + ' lastName ' + lastName + ' birthday ' + birthday + ' cutBirthday ' + cutBirthday + ' sex ' + sex)
+
+        // find the latest index to generate the id
+        let id = 0;
+        for (let singlePatient of patientsCache) {
+          if(singlePatient.id >= id) id = singlePatient.id;
+        }
+        id += 1;
+
+        let newPatient = {
+          id,
+          serial,
+          firstName,
+          lastName,
+          initials,
+          birthday,
+          sex
+        };
+        patientsCache.push(newPatient);
+
+        pubsub.publish(PATIENTS_CHANGED, {Patients: patientsCache});
+        return patientsCache;
+      }
     },
     Subscription: {
       Issues: {
@@ -279,6 +309,9 @@ module.exports = function () {
       },
       Rooms: {
         subscribe: () => pubsub.asyncIterator(ROOMS_CHANGED),
+      },
+      Patients: {
+        subscribe: () => pubsub.asyncIterator(PATIENTS_CHANGED),
       }
     }
   };
