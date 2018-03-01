@@ -16,7 +16,7 @@
             <td>{{patient.sex}}</td>
           </tr>
         </table>
-        <div class='button' v-on:click="addNewPatient()">Add a new Patient</div>
+        <button class='button' v-on:click="addNewPatient()">Admit new Patient</button>
       </div>
     </div>
   </section>
@@ -77,12 +77,9 @@ export default {
   },
   methods: {
     selectPatient: function (event, patient) {
-      // send event to sidebar
-      console.log(patient)
       this.$eventHub.$emit('patient-selected', patient)
     },
     addNewPatient: function () {
-      console.log('add: ')
       this.$eventHub.$emit('patient-new', {})
     }
   }
@@ -99,7 +96,7 @@ export default {
     flex-flow: row wrap;
     white-space: nowrap;
     background: #fff;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); */
 }
 
 .patientView .patientTable th {

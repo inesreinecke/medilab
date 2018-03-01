@@ -3,32 +3,53 @@
   <div class="side">
     <!-- Station was selected -->
     <div v-if="state === 'station'">
-      <h3>Station: {{sidebarData.selectedStation.title}}</h3>
+      <h3 class="heading">Station: {{sidebarData.selectedStation.title}}</h3>
+      any activities applicable for a single Station would go here
     </div>
 
     <!-- Room was selected -->
     <div v-if="state.startsWith('room') == true">
-      <h3>Room: {{sidebarData.selectedRoom.title}}</h3>
+      <h3 class="heading">Room: {{sidebarData.selectedRoom.title}}</h3>
       <div v-if="state === 'room'">
-        <div class='button' v-on:click="displayCheckin()">Checkin Patient</div>
+        <div class="row2">
+          <b class="paramName2">Capacity</b><div class="param2">{{sidebarData.selectedRoom.capacity}}</div>
+        </div>
+
+        <hr class="breaker">
+        <button class='button' v-on:click="displayCheckin()">Checkin Patient</button>
       </div>
 
       <div v-if="state === 'roomCheckin'">
         <select class='dropDown' v-model="selectedPatient">
           <option class='dropDown' v-for="(patient) in Patients" v-bind:key="patient.id" v-bind:value="patient.serial">{{patient.firstName + " " + patient.lastName}}</option>
         </select>
-        <div class='button' v-on:click="executeCheckin()">Checkin now!</div>
+        <button class='button' v-on:click="executeCheckin()">Checkin!</button>
       </div>
     </div>
 
     <!-- Patient was selected -->
     <div v-if="state === 'patient'">
-      <h3>Patient: {{sidebarData.selectedPatient.firstName + " " + sidebarData.selectedPatient.lastName}}</h3>
+      <h3 class="heading">Patient: {{sidebarData.selectedPatient.firstName + " " + sidebarData.selectedPatient.lastName}}</h3>
+      <div class="row2">
+        <b class="paramName2">Firstname</b><div class="param2">{{sidebarData.selectedPatient.firstName}}</div>
+      </div>
+      <div class="row2">
+        <b class="paramName2">Lastname</b><div class="param2">{{sidebarData.selectedPatient.lastName}}</div>
+      </div>
+      <div class="row2">
+        <b class="paramName2">Birthday</b><div class="param2">{{sidebarData.selectedPatient.birthday}}</div>
+      </div>        
+      <div class="row2">
+        <b class="paramName2">Sex</b><div class="param2">{{sidebarData.selectedPatient.sex}}</div>
+      </div>      
+      <hr class="breaker">
+      <button class='button' v-on:click="editPatient()">Edit Patient</button>
+      <button class='button' v-on:click="dismissPatient()">Dismiss Patient!</button>
     </div>
 
     <!-- New Patient should be entered -->
     <div v-if="state === 'patientNew'">
-      <h3>New Patient:</h3>
+      <h3 class="heading">New Patient</h3>
       <div class="row">
         <div class="paramName">First Name</div>
         <input class="param" type="text" v-model="newPatient.firstName">
@@ -86,28 +107,23 @@ export default {
     }
   },
   created: function () {
-    console.log('sidebar created')
-
     // Listen for the i-got-clicked event and its payload.
     this.$eventHub.$on('resetSidebar', item => {
-      console.log('event:resetSidebar')
       this.sidebarData.selectedStation = null
       this.sidebarData.selectedRoom = null
       this.sidebarData.selectedPatient = null
       this.state = 'none'
     })
     this.$eventHub.$on('station-selected', item => {
-      console.log('event:station-selected')
       this.sidebarData.selectedStation = item
       this.state = 'station'
     })
     this.$eventHub.$on('room-selected', item => {
-      console.log('event:room-selected')
       this.sidebarData.selectedRoom = item
+      // console.log(item)
       this.state = 'room'
     })
     this.$eventHub.$on('patient-selected', item => {
-      console.log('event:patient-selected')
       this.sidebarData.selectedPatient = item
       this.state = 'patient'
     })
@@ -139,12 +155,11 @@ export default {
   methods: {
     displayCheckin: function () {
       this.state = 'roomCheckin'
-      console.log(this.Patients)
     },
     executeCheckin: function () {
       this.state = 'room'
 
-      // query rooms for this station
+      // fire mutation to checkIn the patient into the given station/room
       this.$apollo.mutate({
         mutation: gql`mutation checkinPatient($_stationId:ID!, $_roomId:ID!, $patientSerial:String!) {
           checkinPatient(_stationId: $_stationId, _roomId: $_roomId, patientSerial: $patientSerial) {
@@ -159,7 +174,6 @@ export default {
       }
       ).then(({data}) => {
         // this.Rooms = data.RoomsByStation
-        // console.log(this.checkinPatient)
       }).catch((error) => {
         console.error(error)
       })
@@ -172,8 +186,6 @@ export default {
       return false
     },
     createPatient: function () {
-      console.log('create patient: ' + this.newPatient.birthday)
-
       // fire mutation to create patient
       this.$apollo.mutate({
         mutation: gql`mutation addNewPatient($firstName:String!, $lastName:String!, $birthday:String!, $sex:String!) {
@@ -190,10 +202,33 @@ export default {
       }
       ).then(({data}) => {
         // this.Rooms = data.RoomsByStation
-        // console.log(this.checkinPatient)
       }).catch((error) => {
         console.error(error)
       })
+    },
+    dismissPatient: function () {
+      // fire mutation to checkIn the patient into the given station/room
+      this.$apollo.mutate({
+        mutation: gql`mutation checkinPatient($_stationId:ID!, $_roomId:ID!, $patientSerial:String!) {
+          checkinPatient(_stationId: $_stationId, _roomId: $_roomId, patientSerial: $patientSerial) {
+            id
+          }
+        }`,
+        variables: {
+          _stationId: this.sidebarData.selectedStation.id,
+          _roomId: -1,
+          patientSerial: this.sidebarData.selectedPatient.serial
+        }
+      }
+      ).then(({data}) => {
+        this.sidebarData.selectedPatient = null
+        this.state = 'none'
+      }).catch((error) => {
+        console.error(error)
+      })
+    },
+    editPatient: function () {
+      this.state = 'patientNew'
     }
   }
 }
@@ -224,12 +259,16 @@ export default {
     text-align: center;
     text-decoration: none;
     display: inline-block;
+    margin-bottom: 2px;
 }
 
 .side .button:disabled{
     background-color: rgb(122, 122, 122); 
 }
-
+/* On mouse-over, add a deeper shadow */
+.side .button:hover {
+  opacity: 0.75;
+}
 
 .side .dropDown  {
     outline: 0;
@@ -250,6 +289,13 @@ export default {
     width: 100%;
 }
 
+.side .row2 {
+    position: relative;
+    display: flex;
+    margin-bottom: 2px;
+    width: 100%;
+}
+
 .side .paramName {
   padding: 10px;
   background: #a8a8a8;
@@ -259,6 +305,32 @@ export default {
 .side .param {
   padding: 10px;
   width: 100%
+}
+
+
+.side .paramName2 {
+  padding: 10px;
+  background: #a8a8a8;
+  width: 140px;
+}
+
+.side .param2 {
+  background: #dddddd;
+  padding: 10px;
+  width: 100%
+}
+
+.side .heading {
+  background: #414c55;
+  padding: 10px;
+  margin: 0px -10px 10px -10px;
+  color: #fff;
+}
+
+.side .breaker {
+  margin-left: -10px;
+  margin-right: -10px;
+  color: #414c55
 }
 
 </style>

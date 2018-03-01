@@ -70,15 +70,17 @@ export default {
               id
               patient {
                 id
+                serial
                 initials
                 firstName
                 lastName
+                birthday
+                sex
               }
             }
           }
         }`,
         result ({data}) {
-          console.log(JSON.stringify(data))
           this.Rooms = data.Rooms
         }
       }
@@ -121,9 +123,12 @@ export default {
               id
               patient {
                 id
+                serial
                 initials
                 firstName
                 lastName
+                birthday
+                sex
               }
             }
           }
@@ -134,7 +139,6 @@ export default {
       }
       ).then(({data}) => {
         this.Rooms = data.RoomsByStation
-        console.log(this.RoomsByStation)
       }).catch((error) => {
         console.error(error)
       })
@@ -153,8 +157,8 @@ export default {
 
 .stationLayoutView .card {
     /* Add shadows to create the "card" effect */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.5s;
+    /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.5s; */
     width: 200px;
     height: 200px;
     margin: 10px;

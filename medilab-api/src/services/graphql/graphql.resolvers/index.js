@@ -170,7 +170,7 @@ var getRoomsByStation = function(_stationId) {
     } 
   }
   return selectedRooms;
-}
+};
 
 module.exports = function () {
   return {
@@ -185,7 +185,7 @@ module.exports = function () {
         return stationCache;
       },
       StationById (root, { id }, context) {
-        for (station of stationCache) {
+        for (let station of stationCache) {
           if(station.id == id) return station;
         }
         return null;
@@ -255,20 +255,21 @@ module.exports = function () {
             }
           }
           id += 1;
-          // console.log(JSON.stringify(allocationCache));
-
-          newAllocation = {
-            id,
-            _stationId,
-            _roomId,
-            patientSerial,
-          };
-          allocationCache.push(newAllocation);
-          newAllocation.patient = localPatient;
-
+          // only allocate the petient when a room was given, else dismiss the patient
+          if(_roomId != -1) {
+            newAllocation = {
+              id,
+              _stationId,
+              _roomId,
+              patientSerial,
+            };
+            allocationCache.push(newAllocation);
+            newAllocation.patient = localPatient;
+          }
         }
 
         let currentRoomsByStation = getRoomsByStation(_stationId);
+        console.log(currentRoomsByStation);
         pubsub.publish(ROOMS_CHANGED, {Rooms: currentRoomsByStation});
 
         return currentRoomsByStation;
