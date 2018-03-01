@@ -83,6 +83,7 @@ export default {
     },
     addNewPatient: function () {
       console.log('add: ')
+      this.$eventHub.$emit('patient-new', {})
     }
   }
 }
