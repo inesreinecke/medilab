@@ -18,7 +18,7 @@
             <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
               <h3><b>{{room.title}}</b></h3> 
 
-              <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click="selectPatient($event, patient)">
+              <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click.stop="selectPatient($event, patient)">
                 <div class="avatar-circle">
                   <span class="initials">{{patient.patient.initials}}</span>
                 </div> 

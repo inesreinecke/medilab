@@ -1,14 +1,19 @@
 
 <template>
   <div class="side">
-    <div v-if="sidebarData.selectedStation">
+    <!-- Station was selected -->
+    <div v-if="state === 'station'">
       <h3>Station: {{sidebarData.selectedStation.title}}</h3>
     </div>
-    <div v-if="sidebarData.selectedRoom">
-      <h3>Room: {{sidebarData.selectedRoom.title}}</h3>
-      <div class='button' v-if="!stateData.displayCheckin" v-on:click="displayCheckin()">Checkin Patient</div>
 
-      <div v-if="stateData.displayCheckin">
+    <!-- Room was selected -->
+    <div v-if="state.startsWith('room') == true">
+      <h3>Room: {{sidebarData.selectedRoom.title}}</h3>
+      <div v-if="state === 'room'">
+        <div class='button' v-on:click="displayCheckin()">Checkin Patient</div>
+      </div>
+
+      <div v-if="state === 'room.checkin'">
         <select class='dropDown' v-model="selectedPatient">
           <option class='dropDown' v-for="(patient) in Patients" v-bind:key="patient.id" v-bind:value="patient.serial">{{patient.firstName + " " + patient.lastName}}</option>
         </select>
@@ -16,9 +21,16 @@
       </div>
     </div>
 
-    <div v-if="sidebarData.selectedPatient">
+    <!-- Patient was selected -->
+    <div v-if="state === 'patient'">
       <h3>Patient: {{sidebarData.selectedPatient.firstName + " " + sidebarData.selectedPatient.lastName}}</h3>
     </div>
+
+    <!-- New Patient should be entered -->
+    <div v-if="sidebarData.selectedPatient">
+
+    </div>
+
   </div>
 
 </template>
@@ -35,9 +47,7 @@ export default {
         selectedRoom: null,
         selectedPatient: null
       },
-      stateData: {
-        displayCheckin: false
-      },
+      state: 'none',
       selectedPatient: {},
       Patients: []
     }
@@ -47,22 +57,26 @@ export default {
 
     // Listen for the i-got-clicked event and its payload.
     this.$eventHub.$on('resetSidebar', item => {
+      console.log('event:resetSidebar')
       this.sidebarData.selectedStation = null
       this.sidebarData.selectedRoom = null
       this.sidebarData.selectedPatient = null
+      this.state = 'none'
     })
     this.$eventHub.$on('station-selected', item => {
+      console.log('event:station-selected')
       this.sidebarData.selectedStation = item
-      // this.sidebarData.selectedRoom = null
-      // this.sidebarData.selectedPatient = null
+      this.state = 'station'
     })
     this.$eventHub.$on('room-selected', item => {
+      console.log('event:room-selected')
       this.sidebarData.selectedRoom = item
-      // this.sidebarData.selectedPatient = null
+      this.state = 'room'
     })
     this.$eventHub.$on('patient-selected', item => {
+      console.log('event:patient-selected')
       this.sidebarData.selectedPatient = item
-      console.log(item)
+      this.state = 'patient'
     })
   },
   mounted () {
@@ -87,11 +101,11 @@ export default {
   },
   methods: {
     displayCheckin: function () {
-      this.stateData.displayCheckin = true
+      this.state = 'room.checkin'
       console.log(this.Patients)
     },
     executeCheckin: function () {
-      this.stateData.displayCheckin = false
+      this.state = 'room'
       console.log('patientSerial: ' + this.selectedPatient)
 
       // query rooms for this station
