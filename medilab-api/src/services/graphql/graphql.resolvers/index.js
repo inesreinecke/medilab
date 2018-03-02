@@ -175,28 +175,32 @@ var getRoomsByStation = function(_stationId) {
 module.exports = function () {
   return {
     Query: {
-      Welcome (root, args, context) {
+      Welcome (root, args, { db }) {
+        
+        const user = db.insert({ _id: 0, first_name: 'John', last_name: 'Doe', age: 29 });
+        console.log('User', user)
         return 'Welcome to MediLab';
+
       },
-      Issues (root, { id }, context) {
+      Issues (root, { id }, { db }) {
         return issueCache;
       },
-      Stations (root, args, context) {
+      Stations (root, args, { db }) {
         return stationCache;
       },
-      StationById (root, { id }, context) {
+      StationById (root, { id }, { db }) {
         for (let station of stationCache) {
           if(station.id == id) return station;
         }
         return null;
       },
-      Rooms (root, args, context) {
+      Rooms (root, args, { db }) {
         return roomsCache;
       },
-      RoomsByStation (root, {_stationId}, context) {
+      RoomsByStation (root, {_stationId}, { db }) {
         return getRoomsByStation(_stationId);
       },
-      Allocation (root, args, context) {
+      Allocation (root, args, { db }) {
         let enrichedAllocations = [];
         for (let allocation of allocationCache) {
           let enrichedAllocation = JSON.parse(JSON.stringify(allocation));
@@ -211,13 +215,13 @@ module.exports = function () {
 
         return enrichedAllocations;
       },
-      Patients (root, args, context) {
+      Patients (root, args, { db }) {
         return patientsCache;
       },
       
     },
     Mutation: {
-      addIssue(root, { id, title, status }, context) {
+      addIssue(root, { id, title, status }, { db }) {
         const issue = {
           id,
           title,
@@ -233,7 +237,7 @@ module.exports = function () {
 
         return issue;
       },
-      checkinPatient(root, {_stationId, _roomId, patientSerial }, context) {
+      checkinPatient(root, {_stationId, _roomId, patientSerial }, { db }) {
         let newAllocation = {};
 
         // first lookup the patient 
@@ -274,7 +278,7 @@ module.exports = function () {
 
         return currentRoomsByStation;
       },
-      addNewPatient(root, {firstName, lastName, birthday, sex }, context) {
+      addNewPatient(root, {firstName, lastName, birthday, sex }, { db }) {
 
         // create some props we need to create the patient (like initials and serial)
         let initials = firstName.toLowerCase().substring(0,1) + lastName.toLowerCase().substring(0,1);

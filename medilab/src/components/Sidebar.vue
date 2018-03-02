@@ -59,8 +59,9 @@
         <input class="param" type="text" v-model="newPatient.lastName">
       </div>
       <div class="row">
-        <div class="paramName">Birthday (YYYY-MM-DD)</div>
-        <input class="param" type="text" v-model="newPatient.birthday">
+        <div class="paramName">Birthday</div>
+        <datepicker :format="customFormatter()" v-model="newPatient.birthday"></datepicker>
+        <!-- <input class="param" type="text" v-model="newPatient.birthday"> -->
       </div>
       <div class="row"> 
         <div class="paramName">Sex</div>
@@ -70,7 +71,7 @@
           </select>
       </div>
 
-      <button class='button' @click="createPatient()" :disabled="validateInputData()">Create Patient!</button>
+      <button class='button' @click="createPatient()" :disabled="isInvalidData()">Create Patient!</button>
     </div>
 
   </div>
@@ -79,20 +80,25 @@
 
 <script>
 import gql from 'graphql-tag'
+import Datepicker from 'vuejs-datepicker'
+import moment from 'moment'
 
-function isValidDate (dateString) {
-  if (dateString != null) {
-    var regEx = /^\d{4}-\d{2}-\d{2}$/
-    if (!dateString.match(regEx)) return false
-    var d = new Date(dateString)
-    if (!d.getTime() && d.getTime() !== 0) return false
-    return d.toISOString().slice(0, 10) === dateString
-  }
-  return false
-}
+// function isValidDate (dateString) {
+//   if (dateString != null) {
+//     var regEx = /^\d{4}-\d{2}-\d{2}$/
+//     if (!dateString.match(regEx)) return false
+//     var d = new Date(dateString)
+//     if (!d.getTime() && d.getTime() !== 0) return false
+//     return d.toISOString().slice(0, 10) === dateString
+//   }
+//   return false
+// }
 
 export default {
   name: 'sidebar',
+  components: {
+    Datepicker
+  },
   data () {
     return {
       sidebarData: {
@@ -178,10 +184,11 @@ export default {
         console.error(error)
       })
     },
-    validateInputData: function () {
+    isInvalidData: function () {
+      console.log(this.newPatient.birthday)
       if (!this.newPatient.firstName) return true
       if (!this.newPatient.lastName) return true
-      if (!isValidDate(this.newPatient.birthday)) return true
+      // if (!isValidDate(this.newPatient.birthday)) return true
       if (!this.newPatient.sex) return true
       return false
     },
@@ -229,6 +236,9 @@ export default {
     },
     editPatient: function () {
       this.state = 'patientNew'
+    },
+    customFormatter (date) {
+      return moment(date).format('YYYY-MM-DD')
     }
   }
 }
