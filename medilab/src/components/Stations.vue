@@ -1,43 +1,62 @@
 <template>
-  <section class="viewCard">
-    <div class="viewCardBody">
-      <div class="stationLayoutView">
-        <div class="row">
-          <div class="card" v-for="(station) of Stations" v-bind:key="station.id" v-on:click="selectStation($event, station)">
-            <div class="body" v-bind:style="{backgroundColor:station.bgColor}">
-              <h3><b>{{station.title}}</b></h3> 
-            </div>
-            <div class="footer">
-              <p>{{station.leader}}</p> 
-            </div>
-          </div>
-      </div>
+  <div id="app">
+    <heading></heading>
+    <main class="appMain">
+      <navigator></navigator>
 
-      <div class="row">
-          <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click="selectRoom($event, room)">
-            <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
-              <h3><b>{{room.title}}</b></h3> 
+      <section class="viewCard">
+        <div class="viewCardBody">
 
-              <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click.stop="selectPatient($event, patient)">
-                <div class="avatar-circle">
-                  <span class="initials">{{patient.patient.initials}}</span>
-                </div> 
+          <!-- row for the stations -->
+          <div class="row">
+            <div class="card" v-for="(station) of Stations" v-bind:key="station.id" v-on:click="selectStation($event, station)">
+              <div class="body" v-bind:style="{backgroundColor:station.bgColor}">
+                <h3><b>{{station.title}}</b></h3> 
+              </div>
+              <div class="footer">
+                <p>{{station.leader}}</p> 
               </div>
             </div>
-          </div>
-        </div>
+          </div>  <!-- stations -->
 
-      </div>
-    </div>
-  </section>
+          <!-- row for the rooms -->
+          <div class="row">
+            <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click="selectRoom($event, room)">
+              <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
+                <h3><b>{{room.title}}</b></h3> 
+
+                <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click.stop="selectPatient($event, patient)">
+                  <div class="avatar-circle">
+                    <span class="initials">{{patient.patient.initials}}</span>
+                  </div> 
+                </div>
+              </div>
+            </div>
+          </div> <!-- rooms -->
+
+        </div>
+      </section>
+
+       <sidebar></sidebar>
+    </main>
+  </div>
+
 </template>
 
 
 <script>
 import gql from 'graphql-tag'
+import Heading from '@/components/Heading'
+import Navigator from '@/components/Navigator'
+import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'stationLayout',
+  components: {
+    Heading,
+    Navigator,
+    Sidebar
+  },
   data () {
     return {
       Stations: [],
@@ -153,31 +172,33 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
-.stationLayoutView .card {
+
+.card {
     /* Add shadows to create the "card" effect */
     /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.5s; */
     width: 200px;
     height: 200px;
     margin: 10px;
+    border: 2px solid rgba(255,255,255,0);
 }
 
 /* On mouse-over, add a deeper shadow */
-.stationLayoutView .card:hover {
-  opacity: 0.5;
+.card:hover {
+  border: 2px solid rgba(0,0,0,1)
 }
 
 /** box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); **/
 
 /* Add some padding inside the card container */
-.stationLayoutView .card .body {
+.card .body {
     padding: 2px 16px;
     height:75%
 }
 
-.stationLayoutView .card .footer {
+.card .footer {
     padding: 2px 16px;
     background-color: #ffffff;
     height:25%;
@@ -185,47 +206,49 @@ export default {
     vertical-align: middle;
 }
 
-.stationLayoutView .card .full {
+.card .full {
     padding: 2px 16px;
     height:100%;
 }
 
-.stationLayoutView .row {
+.row {
     position: relative;
     display: flex;
     flex-flow: row wrap;
 }
 
-.stationLayoutView .avatar-circle {
-  width: 48px;
-  height: 48px;
-  background-color: #000;
+.avatar-circle {
+  width: 52px;
+  height: 52px;
+  background-color: #fff;
   text-align: center;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0)
 }
 
-.stationLayoutView .initials {
+
+.avatar-circle:hover {
+  border: 2px solid rgba(0,0,0,1)
+}
+
+.initials {
   position: relative;
   top: 12px; /* 25% of parent */
   font-size: 25px; /* 50% of parent */
   line-height: 25px; /* 50% of parent */
-  color: #fff;
+  color: #000;
   font-family: "Courier New", monospace;
   font-weight: bold;
 }
 
-.stationLayoutView .box {
+.box {
     box-sizing: border-box;
     float: left;
     padding: 5px;
     border: 0px solid black;
 }
 
-/* On mouse-over, add a deeper shadow */
-.stationLayoutView .box:hover {
-  opacity: 0.5;
-}
 
 </style>

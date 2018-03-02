@@ -1,32 +1,48 @@
 <template>
-  <section class="viewCard">
-    <div class="viewCardBody">
-      <div class="patientView">
-        <table class="patientTable">
-          <tr>
-            <th>Name</th>
-            <th>Serial</th>
-            <th>Birthday</th>
-            <th>Sex</th>
-          </tr>
-          <tr v-for="(patient) of Patients" v-bind:key="patient.id" v-on:click="selectPatient($event, patient)">
-            <td>{{patient.firstName + " " + patient.lastName}}</td>
-            <td>{{patient.serial}}</td>
-            <td>{{patient.birthday}}</td>
-            <td>{{patient.sex}}</td>
-          </tr>
-        </table>
-        <button class='button' v-on:click="addNewPatient()">Admit new Patient</button>
-      </div>
-    </div>
-  </section>
+  <div id="app">
+    <heading></heading>
+    <main class="appMain">
+      <navigator></navigator>
+
+      <section class="viewCard">
+        <div class="viewCardBody">
+
+          <table class="patientTable">
+            <tr>
+              <th>Name</th>
+              <th>Serial</th>
+              <th>Birthday</th>
+              <th>Sex</th>
+            </tr>
+            <tr v-for="(patient) of Patients" v-bind:key="patient.id" v-on:click="selectPatient($event, patient)">
+              <td>{{patient.firstName + " " + patient.lastName}}</td>
+              <td>{{patient.serial}}</td>
+              <td>{{patient.birthday}}</td>
+              <td>{{patient.sex}}</td>
+            </tr>
+          </table>
+          <button class='button' v-on:click="addNewPatient()">Admit new Patient</button>
+        
+        </div>
+      </section>
+       <sidebar></sidebar>
+    </main>
+  </div>   
 </template>
 
 <script>
 import gql from 'graphql-tag'
+import Heading from '@/components/Heading'
+import Navigator from '@/components/Navigator'
+import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'patients',
+  components: {
+    Heading,
+    Navigator,
+    Sidebar
+  },
   data () {
     return {
       Patients: []
@@ -87,9 +103,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
 
-.patientView .patientTable {
+.patientTable {
     //border: solid 1px;
     margin:10px;
     display: block;
@@ -99,25 +115,25 @@ export default {
     /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); */
 }
 
-.patientView .patientTable th {
+.patientTable th {
   padding: 10px;
   background: #a8a8a8;
   text-align: left;
 }
 
-.patientView .patientTable td {
+.patientTable td {
   padding: 10px;
 }
 
-.patientView .patientTable td:last-child {
+.patientTable td:last-child {
   width:100%;
 }
 
-.patientView .patientTable tr:hover td {
+.patientTable tr:hover td {
   background-color: #d1d1d1;
 }
 
-.patientView .button {
+.button {
     background-color: #4CAF50; /* Green */
     border: none;
     color: white;

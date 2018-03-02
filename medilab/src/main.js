@@ -53,6 +53,18 @@ Vue.config.productionTip = false
 
 Vue.prototype.$eventHub = new Vue()
 
+router.beforeEach((to, from, next) => {
+  // console.log('Global -- beforeEach - fired')
+  if (to.path === '/foo') next('/')
+  // else if (to.path === '/error') {
+  //   const err = new Error('My Error Message')
+  //   next(err)
+  // }
+  else {
+    next()
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
