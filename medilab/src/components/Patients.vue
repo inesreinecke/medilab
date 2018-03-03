@@ -45,26 +45,6 @@ export default {
       Patients: []
     }
   },
-  apollo: {
-    $subscribe: {
-      Issues: {
-        query: gql`subscription patients {
-          Patients {
-            id
-            serial
-            firstName
-            lastName
-            initials
-            birthday
-            sex
-          }
-        }`,
-        result ({data}) {
-          this.Patients = data.Patients
-        }
-      }
-    }
-  },
   mounted () {
     // on init/mounting of this component, reset the sidebar
     this.$eventHub.$emit('resetSidebar', {})

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     <!-- <heading></heading>   -->
 
     <b-jumbotron>

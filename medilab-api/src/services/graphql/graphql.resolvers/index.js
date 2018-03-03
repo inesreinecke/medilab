@@ -1,242 +1,219 @@
 const { PubSub } = require('graphql-subscriptions');
 const pubsub = new PubSub();
-const ISSUE_ADDED = 'ISSUE_ADDED';
 const ROOMS_CHANGED = 'ROOMS_CHANGED';
 const PATIENTS_CHANGED = 'PATIENTS_CHANGED';
 
-var stationCache = [
-  {
-    id: 1,
-    title: 'Innere Medizin',
-    bgColor: '#dc67ff',
-    leader: 'Dr. Habermann'
-  },
-  {
-    id: 2,
-    title: 'Intensivstation',
-    bgColor: '#79dd9a',
-    leader: 'Dr. Mustermann'
-  },
-];
-
-var patientsCache = [
-  {
-    id: 1,
-    serial: 'tr19790923',
-    firstName: 'Thomas',
-    lastName: 'Reinecke',
-    initials: 'TR',
-    birthday: '1979-09-23',
-    sex: 'male'
-  },
-  {
-    id: 2,
-    serial: 'ir19810105',
-    firstName: 'Ines',
-    lastName: 'Reinecke',
-    initials: 'IR',
-    birthday: '1981-01-05',
-    sex: 'female'
-  },
-  {
-    id: 3,
-    serial: 'ar20081205',
-    firstName: 'Anna',
-    lastName: 'Reinecke',
-    initials: 'AR',
-    birthday: '2008-12-05',
-    sex: 'female'
-  },
-];
-
-var roomsCache = [
-  {
-    id: 1,
-    _stationId: 1,
-    title: '1-001',
-    bgColor: '#dc67ff',
-    capacity: 4
-  },
-  {
-    id: 2,
-    _stationId: 1,
-    title: '1-002',
-    bgColor: '#dc67ff',
-    capacity: 2,
-    allocation: []
-  },
-  {
-    id: 3,
-    _stationId: 1,
-    title: '1-003',
-    bgColor: '#dc67ff',
-    capacity: 2,
-    allocation: []    
-  },
-  {
-    id: 4,
-    _stationId: 1,
-    title: '1-004',
-    bgColor: '#dc67ff',
-    capacity: 2,
-    allocation: []
-  },
-  {
-    id: 5,
-    _stationId: 2,
-    title: '2-001',
-    bgColor: '#79dd9a',
-    capacity: 2,
-    allocation: []
-  },
-  {
-    id: 6,
-    _stationId: 2,
-    title: '2-002',
-    bgColor: '#79dd9a',
-    capacity: 4,
-    allocation: []
-  },
-  {
-    id: 7,
-    _stationId: 2,
-    title: '2-003',
-    bgColor: '#79dd9a',
-    capacity: 2,
-    allocation: []
-  }
-];
-
-var allocationCache = [
-  {
-    id: 1,
-    _stationId: 1,
-    _roomId: 1,
-    patientSerial: 'tr19790923' 
-  },
-  {
-    id: 2,
-    _stationId: 1,
-    _roomId: 1,
-    patientSerial: 'ir19810105' 
-  }
-];
+const Modok = require('modokdb');
+const stationsDB = new Modok('stations');
+const roomsDB = new Modok('rooms');
+const patientsDB = new Modok('patients');
 
 
+/** 
+ * resetting the inMemory database 
+ **/
+var resetDatabase = function() {
 
-var issueCache = [
-  {
-    id: 1,
-    title: 'Issue '+Math.floor((Math.random() * 10) + 1),
-    status: 'open',
-    created_at: new Date()
-  },
-  {
-    id: 2,
-    title: 'Issue '+Math.floor((Math.random() * 10) + 1),
-    status: 'closed',
-    created_at: new Date()
-  },
-  {
-    id: 3,
-    title: 'Issue '+Math.floor((Math.random() * 10) + 1),
-    status: 'limboState',
-    created_at: new Date()
-  }
-]; 
+  // reset Stations
+  stationsDB.deleteMany({});
+  stationsDB.insertMany(
+    [{
+      id: 1,
+      title: 'Innere Medizin',
+      bgColor: '#dc67ff',
+      leader: 'Dr. Habermann'
+    },
+    {
+      id: 2,
+      title: 'Intensivstation',
+      bgColor: '#79dd9a',
+      leader: 'Dr. Mustermann'
+    }]
+  );
+  console.log("resetted 'stations' on InMemoryDb");
 
-var getRoomsByStation = function(_stationId) {
-  let selectedRooms = [];
-  for (let origRoom of roomsCache) {
-    var room = JSON.parse(JSON.stringify(origRoom));
-    if(room._stationId == _stationId) {
 
-      // now walk through all rooms and add their respective allocation
-      for (let alloc of allocationCache) {
-        if(alloc._roomId == room.id) {
-          if(room.allocation == null) room.allocation = [];
-
-          // lookup the patient and merge its
-          for (let patient of patientsCache) {
-            if(alloc.patientSerial == patient.serial) {
-              alloc.patient = patient;
-            }
-          }
-
-          room.allocation.push(alloc);
+  roomsDB.deleteMany({});
+  roomsDB.insertMany([
+    {
+      id: 1,
+      _stationId: 1,
+      title: '1-001',
+      bgColor: '#dc67ff',
+      capacity: 4,
+      beds: [
+        {
+          id: 1,
+          used: true,
+          _patientId : 1
+        },
+        {
+          id: 2,
+          used: true,
+          _patientId : 2
+        },
+        {
+          id: 3,
+          used: false
+        },
+        {
+          id: 4,
+          used: false
         }
-      }
-      selectedRooms.push(room);
-    } 
-  }
-  return selectedRooms;
+      ]
+    },
+    // {
+    //   id: 2,
+    //   _stationId: 1,
+    //   title: '1-002',
+    //   bgColor: '#dc67ff',
+    //   capacity: 4
+    // },
+    // {
+    //   id: 3,
+    //   _stationId: 1,
+    //   title: '1-003',
+    //   bgColor: '#dc67ff',
+    //   capacity: 2  
+    // },
+    // {
+    //   id: 4,
+    //   _stationId: 1,
+    //   title: '1-004',
+    //   bgColor: '#dc67ff',
+    //   capacity: 2
+    // },
+    // {
+    //   id: 5,
+    //   _stationId: 2,
+    //   title: '2-001',
+    //   bgColor: '#79dd9a',
+    //   capacity: 2
+    // },
+    // {
+    //   id: 6,
+    //   _stationId: 2,
+    //   title: '2-002',
+    //   bgColor: '#79dd9a',
+    //   capacity: 4
+    // },
+    // {
+    //   id: 7,
+    //   _stationId: 2,
+    //   title: '2-003',
+    //   bgColor: '#79dd9a',
+    //   capacity: 2
+    // }
+  ]);
+  console.log("resetted 'rooms' on InMemoryDb");
+
+
+  patientsDB.deleteMany({});
+  patientsDB.insertMany([
+    {
+      id: 1,
+      serial: 'tr19790923',
+      firstName: 'Thomas',
+      lastName: 'Reinecke',
+      initials: 'TR',
+      birthday: '1979-09-23',
+      sex: 'male'
+    },
+    {
+      id: 2,
+      serial: 'ir19810105',
+      firstName: 'Ines',
+      lastName: 'Reinecke',
+      initials: 'IR',
+      birthday: '1981-01-05',
+      sex: 'female'
+    },
+    {
+      id: 3,
+      serial: 'ar20081205',
+      firstName: 'Anna',
+      lastName: 'Reinecke',
+      initials: 'AR',
+      birthday: '2008-12-05',
+      sex: 'female'
+    },
+  ]);
+
 };
+
+/**
+ * getRoomsByStation - fetches the rooms that belong to a given query
+ */
+var getRoomsByQuery = function(query) {
+  let roomResult = [];
+  let roomsCache = roomsDB.find( query );
+
+  for (let origRoom of roomsCache) {
+    let room = JSON.parse(JSON.stringify(origRoom));
+
+    // enrich the beds with the patients
+    for(let x=0; x < room.beds.length; x++) {
+      let singleBed = room.beds[x];
+      if(singleBed._patientId != null) {
+        let patient = patientsDB.findOne( {id: Number(singleBed._patientId) } );
+        singleBed.patient = patient;
+      }
+    }
+    roomResult.push(room);
+  }
+  return roomResult;
+};
+
+// /**
+//  * getAllocationsByRoom - fetches the allocations by given query
+//  */
+// var getAllocationsByQuery = function(query) {
+//   let allocationResult = [];
+//   let allocationCache = allocationsDB.find( query );
+
+//   if(allocationCache != null) {
+//     for (let allocation of allocationCache) {
+//       let singleAllocation = JSON.parse(JSON.stringify(allocation));
+//       // lookup the patient and merge it into the allocation
+//       let singlePatient = patientsDB.findOne( {id : Number(singleAllocation._patientId)} );
+//       singleAllocation.patient = singlePatient;
+//       allocationResult.push(singleAllocation);
+//     }
+//     return allocationResult;
+//   }
+// };
+
 
 module.exports = function () {
   return {
     Query: {
-      Welcome (root, args, { db }) {
-        
-        const user = db.insert({ _id: 0, first_name: 'John', last_name: 'Doe', age: 29 });
-        console.log('User', user)
+      /** returns a Welcome query, for API availability testing */
+      Welcome () {
+        resetDatabase();
         return 'Welcome to MediLab';
+      },
+      /** returns all known stations from stationsDB */
+      Stations () {
+        return stationsDB.find( {} );
+      },
+      /** returns one specific station given by its id */
+      StationById (root, { id }) {
+        return stationsDB.findOne({ id: Number(id) });
+      },
+      /** returns all known rooms from roomsDB */
+      Rooms () {
+        return getRoomsByQuery( {} );
+      },
+      /** returns one specific room given by its id */
+      RoomsByStation (root, {_stationId}) {
+        return getRoomsByQuery( {_stationId: Number(_stationId) });
+      },
+      Patients () {
+        return patientsDB.find( {} );
+      }
 
-      },
-      Issues (root, { id }, { db }) {
-        return issueCache;
-      },
-      Stations (root, args, { db }) {
-        return stationCache;
-      },
-      StationById (root, { id }, { db }) {
-        for (let station of stationCache) {
-          if(station.id == id) return station;
-        }
-        return null;
-      },
-      Rooms (root, args, { db }) {
-        return roomsCache;
-      },
-      RoomsByStation (root, {_stationId}, { db }) {
-        return getRoomsByStation(_stationId);
-      },
-      Allocation (root, args, { db }) {
-        let enrichedAllocations = [];
-        for (let allocation of allocationCache) {
-          let enrichedAllocation = JSON.parse(JSON.stringify(allocation));
-          // lookup the patient and merge its
-          for (let patient of patientsCache) {
-            if(enrichedAllocation.patientSerial == patient.serial) {
-              enrichedAllocation.patient = patient;
-            }
-          }
-          enrichedAllocations.push(enrichedAllocation);
-        }
-
-        return enrichedAllocations;
-      },
-      Patients (root, args, { db }) {
-        return patientsCache;
-      },
-      
     },
     Mutation: {
-      addIssue(root, { id, title, status }, { db }) {
-        const issue = {
-          id,
-          title,
-          status,
-          created_at: new Date()
-        };
-        issueCache.push(issue);
-
-        console.log(JSON.stringify(issueCache));
-
-        // pubsub.publish(ISSUE_ADDED, { issueAdded: issue });
-        pubsub.publish(ISSUE_ADDED, {Issues: issueCache});
-
-        return issue;
-      },
       checkinPatient(root, {_stationId, _roomId, patientSerial }, { db }) {
         let newAllocation = {};
 
@@ -309,9 +286,6 @@ module.exports = function () {
       }
     },
     Subscription: {
-      Issues: {
-        subscribe: () => pubsub.asyncIterator(ISSUE_ADDED),
-      },
       Rooms: {
         subscribe: () => pubsub.asyncIterator(ROOMS_CHANGED),
       },
@@ -321,3 +295,6 @@ module.exports = function () {
     }
   };
 };
+
+// make sure we reset the database after startup
+resetDatabase();

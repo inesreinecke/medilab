@@ -1,11 +1,4 @@
 const typeDefinitions = `
-  type Issue {
-    id: ID!
-    title: String
-    status: String
-    created_at: String
-  }
-
   type Station {
     id: ID!
     title: String
@@ -19,12 +12,12 @@ const typeDefinitions = `
     title: String
     bgColor: String
     capacity: Int
-    allocation: [Allocation]
+    beds: [Bed]
   }
 
   type Patient {
     id: ID!
-    serial : String!
+    serial : String
     firstName: String
     lastName: String
     initials: String
@@ -32,16 +25,14 @@ const typeDefinitions = `
     sex: String
   }
 
-  type Allocation {
-    id: ID!
-    _stationId: ID!
-    _roomId: ID!
+  type Bed {
+    id: ID!,
+    used : Boolean,
     patient: Patient
   }
 
   type Query {
     Welcome: String,
-    Issues: [Issue],
 
     Stations : [Station],
     StationById(id: ID!): Station,
@@ -49,19 +40,15 @@ const typeDefinitions = `
     Rooms : [Room],
     RoomsByStation(_stationId: ID!): [Room],
 
-    Allocation : [Allocation], 
-
     Patients : [Patient]
   }
 
   type Mutation {
-    addIssue(id: ID!, title: String!, status: String): Issue,
     checkinPatient(_stationId: ID!, _roomId: ID!, patientSerial: String!): [Room],
     addNewPatient(firstName: String!, lastName: String!, birthday: String!, sex: String!): [Patient]
   }
 
   type Subscription {
-    Issues: [Issue],
     Rooms: [Room],
     Patients: [Patient]
   }

@@ -5,8 +5,6 @@ const { makeExecutableSchema } = require('graphql-tools');
 
 const TypeDefinitions = require('./graphql.typeDefs');
 const Resolvers = require('./graphql.resolvers');
-const Modok = require('modokdb');
-const db = new Modok('medilab');
 
 module.exports = function () {
   const app = this;
@@ -29,8 +27,7 @@ module.exports = function () {
       schema,
       context: {
         provider,
-        headers,
-        db
+        headers
       }
     };
   }));

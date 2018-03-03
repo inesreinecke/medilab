@@ -1,5 +1,5 @@
 <template>
-  <div id="landing">
+  <div>
     <header class="appHeader">
       <router-link class="title" to="/">MediLab</router-link>
         <div class="navContents" left>
