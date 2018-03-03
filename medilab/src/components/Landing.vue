@@ -7,7 +7,7 @@
         <b-row>
           <b-col xl="9" lg="8" md="6" sm="12">
             <h2>Welcome to Medilab</h2>
-            <p>delivery for course xyz by Ines Reinecke</p>
+            <p>simple medical lab app to manage allocations in hospitals</p>
           </b-col>
           <b-col xl="3" lg="4" md="6" sm="12">
               <b-form-input v-model="username" type="text" placeholder="Username"></b-form-input>
@@ -22,20 +22,22 @@
 
     <b-container flueid>
       <b-row>
-        <b-col xl="auto" lg="auto" md="auto" sm="auto">
-          <b-carousel id="carousel1" style="text-shadow: 1px 1px 2px #333" controls indicators background="#ababab" :interval="7500" img-width="640" img-height="240" v-model="slide" @sliding-start="onSlideStart" @sliding-end="onSlideEnd">
-            <b-carousel-slide img-src="https://lorempixel.com/640/240/abstract/1/">
-              <h1>Hospital management</h1>
+        <b-col xl="6" lg="6" md="12" sm="12">
+          <b-carousel id="carousel1" style="text-shadow: 1px 1px 2px #333" controls indicators background="#ababab" :interval="7500" img-width="640" img-height="400">
+            <b-carousel-slide img-src="https://lorempixel.com/640/400/abstract/7/">
+              <h3>hospital allocation management</h3>
             </b-carousel-slide>
-            <b-carousel-slide img-src="https://lorempixel.com/640/240/people/1/">
-              <h1></h1>
+            <b-carousel-slide img-src="https://lorempixel.com/640/400/people/1/">
+              <h3>patient management</h3>
             </b-carousel-slide>
-            <b-carousel-slide img-src="https://lorempixel.com/640/240/people/7/">
-              <h1>Hello world!</h1>
+            <b-carousel-slide img-src="https://lorempixel.com/640/400/abstract/1/">
+              <h3>latest webapp standards</h3>
+              <p>VueJs, GraphQL, Bootstrap, Webpack, NodeJs, Cloudant</p>
           </b-carousel-slide>      
           </b-carousel>
         </b-col>
-        <b-col xl="auto" lg="auto" md="auto" sm="auto">
+        <b-col xl="6" lg="6" md="12" sm="12">
+          <p>This is the deliverable for course <i>xyz</i> from Ines Reinecke. This app 
           <p>For more information visit Github</p>
           <b-btn variant="primary" target="_blank" href="https://github.com/inesreinecke/medilab">Sources on Github</b-btn>
         </b-col>
@@ -49,13 +51,11 @@
 </template>
 
 <script>
-import Heading from '@/components/Heading'
 import Icon from 'vue-awesome/components/Icon'
 
 export default {
   name: 'landing',
   components: {
-    Heading,
     Icon
   },
   data () {

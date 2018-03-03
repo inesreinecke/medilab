@@ -3,53 +3,67 @@
   <div class="side">
     <!-- Station was selected -->
     <div v-if="state === 'station'">
-      <h3 class="heading">Station: {{sidebarData.selectedStation.title}}</h3>
+      <p class="heading">Station: {{sidebarData.selectedStation.title}}</p>
       any activities applicable for a single Station would go here
     </div>
 
     <!-- Room was selected -->
     <div v-if="state.startsWith('room') == true">
-      <h3 class="heading">Room: {{sidebarData.selectedRoom.title}}</h3>
+      <p class="heading">Room: {{sidebarData.selectedRoom.title}}</p>
       <div v-if="state === 'room'">
-        <div class="row2">
-          <b class="paramName2">Capacity</b><div class="param2">{{sidebarData.selectedRoom.capacity}}</div>
-        </div>
+
+        <b-input-group prepend="Capacity">
+          <b-form-input v-model="sidebarData.selectedRoom.capacity" readonly></b-form-input>
+        </b-input-group>
 
         <hr class="breaker">
-        <button class='button' v-on:click="displayCheckin()">Checkin Patient</button>
+        <b-btn variant="success" v-on:click="displayCheckin()">Checkin Patient</b-btn>
       </div>
 
       <div v-if="state === 'roomCheckin'">
-        <select class='dropDown' v-model="selectedPatient">
-          <option class='dropDown' v-for="(patient) in Patients" v-bind:key="patient.id" v-bind:value="patient.serial">{{patient.firstName + " " + patient.lastName}}</option>
-        </select>
-        <button class='button' v-on:click="executeCheckin()">Checkin!</button>
+        <b-form-select v-model="selectedPatient" class="mb-3">
+          <template slot="first">
+            <option :value="null" disabled>Please select Patient...</option>
+          </template>
+          <option v-for="(patient) in Patients" v-bind:key="patient.id" v-bind:value="patient.serial">{{patient.firstName + " " + patient.lastName}}</option>
+        </b-form-select>
+        <b-btn variant="primary" v-on:click="executeCheckin()">Checkin!</b-btn>
       </div>
     </div>
 
     <!-- Patient was selected -->
     <div v-if="state === 'patient'">
-      <h3 class="heading">Patient: {{sidebarData.selectedPatient.firstName + " " + sidebarData.selectedPatient.lastName}}</h3>
-      <div class="row2">
-        <b class="paramName2">Firstname</b><div class="param2">{{sidebarData.selectedPatient.firstName}}</div>
-      </div>
-      <div class="row2">
-        <b class="paramName2">Lastname</b><div class="param2">{{sidebarData.selectedPatient.lastName}}</div>
-      </div>
-      <div class="row2">
-        <b class="paramName2">Birthday</b><div class="param2">{{sidebarData.selectedPatient.birthday}}</div>
-      </div>        
-      <div class="row2">
-        <b class="paramName2">Sex</b><div class="param2">{{sidebarData.selectedPatient.sex}}</div>
-      </div>      
+      <p class="heading">Patient: {{sidebarData.selectedPatient.firstName + " " + sidebarData.selectedPatient.lastName}}</p>
+
+      <b-container fluid>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Firstname</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.firstName" readonly></b-form-input></b-col>
+        </b-row>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Lastname</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.lastName" readonly></b-form-input></b-col>
+        </b-row>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Birthday</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.birthday" readonly></b-form-input></b-col>
+        </b-row>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Sex</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.sex" readonly></b-form-input></b-col>
+        </b-row>
+
+      </b-container>
+
+ 
       <hr class="breaker">
-      <button class='button' v-on:click="editPatient()">Edit Patient</button>
-      <button class='button' v-on:click="dismissPatient()">Dismiss Patient!</button>
+      <b-btn variant="primary" v-on:click="editPatient()">Edit Patient</b-btn>
+      <b-btn variant="danger" v-on:click="dismissPatient()">Dismiss Patient</b-btn>
     </div>
 
     <!-- New Patient should be entered -->
     <div v-if="state === 'patientNew'">
-      <h3 class="heading">New Patient</h3>
+      <p class="heading">New Patient</p>
       <div class="row">
         <div class="paramName">First Name</div>
         <input class="param" type="text" v-model="newPatient.firstName">
@@ -236,99 +250,46 @@ export default {
 <style scoped>
 
 .side {
-    //display: flex;
-    //flex-direction: row-reverse;
     padding-left: 10px;
     padding-right: 10px;
     top: 0;
     width: 400px;
-    background-color: #fff;
+    background-color: rgb(213, 216, 219);
     right: 0;
     z-index: 10;
     border-left: 0 solid #fff;
 }
 
-.side .button {
-    background-color: #4CAF50; 
-    border: none;
-    color: white;
-    width: 100%;
-    padding: 10px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 2px;
+.ownLabel {
+  position: absolute;
+  margin-top: 8px;
 }
 
-.side .button:disabled{
-    background-color: rgb(122, 122, 122); 
-}
-/* On mouse-over, add a deeper shadow */
-.side .button:hover {
-  opacity: 0.75;
-}
-
-.side .dropDown  {
-    outline: 0;
-    overflow: hidden;
-    height: 40px;
-    padding: 10px 32px;
-    border: #2c343c;
-    background: #ededed;
-    padding: 5px 3px 5px 10px;
-    width: 100%;
-}
-
-.side .row {
-    position: relative;
-    display: flex;
-    flex-flow: row wrap;
-    margin-bottom: 2px;
-    width: 100%;
-}
-
-.side .row2 {
-    position: relative;
-    display: flex;
-    margin-bottom: 2px;
-    width: 100%;
-}
-
-.side .paramName {
-  padding: 10px;
-  background: #a8a8a8;
-  width: 100%;
-}
-
-.side .param {
-  padding: 10px;
-  width: 100%
-}
-
-
-.side .paramName2 {
-  padding: 10px;
-  background: #a8a8a8;
-  width: 140px;
-}
-
-.side .param2 {
-  background: #dddddd;
-  padding: 10px;
-  width: 100%
-}
-
-.side .heading {
+.heading {
   background: #414c55;
   padding: 10px;
   margin: 0px -10px 10px -10px;
   color: #fff;
 }
 
-.side .breaker {
+.breaker {
   margin-left: -10px;
   margin-right: -10px;
   color: #414c55
 }
+
+select option:disabled {
+    color: #000;
+    font-weight: bold;
+}
+
+
+/** disable frame around inputs and textarea in chrome **/
+textarea:focus, input:focus{
+  outline-style:none;
+  box-shadow:none;
+  border-color:transparent;
+}
+
 
 </style>

@@ -1,9 +1,15 @@
 <template>
-  <header class="appHeader">
-      <div class="title">MediLab</div>
-
+  <div id="landing">
+    <header class="appHeader">
+      <router-link class="title" to="/">MediLab</router-link>
+        <div class="navContents" left>
+          <router-link class="navElement" to="/stations">Stations</router-link>
+          <router-link class="navElement" to="/patients">Patients</router-link>
+          <img class="avatar" src="static/img/img_avatar.png" v-if="isAuthenticated()" v-on:click="doLogout()">
+        </div>
       <img class="avatar" src="static/img/img_avatar.png" v-if="isAuthenticated()" v-on:click="doLogout()">
-  </header>
+    </header>
+  </div>
 </template>
 
 <script>
@@ -37,22 +43,18 @@ export default {
 /** defines the header including the application title **/
 .appHeader {
   position: static;
-  border-top: 4px solid #65a8ff;
   top: 0!important;
   height: 55px;
   width: 100%;
   min-width: 320px!important;
-  color: #fff;
-  background-color: #152531;
+  background: rgb(233, 236, 239);
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  z-index: 11;
 }
-
 /** application title thats living inside of the header **/
 .appHeader .title {
   display: inline-flex;
@@ -62,12 +64,31 @@ export default {
   font-size: 18px;
   position: relative;
   margin-left: 10px;
-  margin-right: 5px;
-  font-family: "Helvetica Neue",Helvetica;
+  margin-right: 20px;
+  color: #131212;
+  text-decoration: none;
+}
+
+/** style for left navigational component **/
+.navContents {
+  display: inline-block;
+}
+
+/** style for a single element in left nav **/
+.navElement {
+  /* padding: 0px 10px; */
+  color: #131212;
+  text-decoration: none;
+  width: 100%;
+  margin: 5px;
+}
+
+.navElement.router-link-exact-active {
   font-weight: bold;
 }
 
-.appHeader img.avatar {
+
+img.avatar {
     top: 12px;
     position: absolute;
     width: 35px;
@@ -78,6 +99,10 @@ export default {
     border-top-right-radius: 50%;
     border-bottom-right-radius: 50%;
     border-bottom-left-radius: 50%;
+}
+
+img.avatar:hover {
+  cursor: pointer;
 }
 
 </style>

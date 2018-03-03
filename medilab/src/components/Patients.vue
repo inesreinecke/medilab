@@ -2,7 +2,6 @@
   <div id="app">
     <heading></heading>
     <main class="appMain">
-      <navigator></navigator>
 
       <section class="viewCard">
         <div class="viewCardBody">
@@ -33,14 +32,12 @@
 <script>
 import gql from 'graphql-tag'
 import Heading from '@/components/Heading'
-import Navigator from '@/components/Navigator'
 import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'patients',
   components: {
     Heading,
-    Navigator,
     Sidebar
   },
   data () {

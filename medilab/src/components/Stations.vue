@@ -2,25 +2,24 @@
   <div id="app">
     <heading></heading>
     <main class="appMain">
-      <navigator></navigator>
 
       <section class="viewCard">
         <div class="viewCardBody">
 
           <!-- row for the stations -->
-          <div class="row">
+          <div class="cardRow">
             <div class="card" v-for="(station) of Stations" v-bind:key="station.id" v-on:click="selectStation($event, station)">
               <div class="body" v-bind:style="{backgroundColor:station.bgColor}">
-                <h3><b>{{station.title}}</b></h3> 
+                <p class="bodyText">{{station.title}}</p> 
               </div>
               <div class="footer">
-                <p>{{station.leader}}</p> 
+                <p class="footerText">{{station.leader}}</p> 
               </div>
             </div>
           </div>  <!-- stations -->
 
           <!-- row for the rooms -->
-          <div class="row">
+          <div class="cardRow">
             <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click="selectRoom($event, room)">
               <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
                 <h3><b>{{room.title}}</b></h3> 
@@ -47,14 +46,12 @@
 <script>
 import gql from 'graphql-tag'
 import Heading from '@/components/Heading'
-import Navigator from '@/components/Navigator'
 import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'stationLayout',
   components: {
     Heading,
-    Navigator,
     Sidebar
   },
   data () {
@@ -187,7 +184,8 @@ export default {
 
 /* On mouse-over, add a deeper shadow */
 .card:hover {
-  border: 2px solid rgba(0,0,0,1)
+  border: 2px solid rgba(0,0,0,1);
+  cursor: pointer;
 }
 
 /** box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); **/
@@ -198,24 +196,36 @@ export default {
     height:75%
 }
 
+.card .body .bodyText {
+  margin-top:10px;
+  font-size: 20px;
+}
+
+
 .card .footer {
     padding: 2px 16px;
-    background-color: #ffffff;
+    background-color: #202020;
     height:25%;
+}
+
+.card .footer .footerText {
     font-size: 14px;
     vertical-align: middle;
+    color: #fff;
+    margin-top: 10px;
 }
+
 
 .card .full {
     padding: 2px 16px;
     height:100%;
 }
 
-.row {
-    position: relative;
+.cardRow {
     display: flex;
     flex-flow: row wrap;
 }
+
 
 .avatar-circle {
   width: 52px;
@@ -239,7 +249,6 @@ export default {
   font-size: 25px; /* 50% of parent */
   line-height: 25px; /* 50% of parent */
   color: #000;
-  font-family: "Courier New", monospace;
   font-weight: bold;
 }
 

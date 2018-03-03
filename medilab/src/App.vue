@@ -6,14 +6,12 @@
 
 <script>
 import Heading from '@/components/Heading'
-import Navigator from '@/components/Navigator'
 import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'app',
   components: {
     Heading,
-    Navigator,
     Sidebar
   }
 }
@@ -37,7 +35,6 @@ body {
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #232629;
@@ -46,6 +43,8 @@ body {
   position: relative;
   height: 100vh!important;
 }
+
+
 
 .appMain {
     position: relative;
@@ -58,12 +57,12 @@ body {
 /** main view area definition **/
 .viewCard {
   display: block;
-  background-color: #ededed;
+  background-color: #fff;
   border-radius: 0;
   width: 100%;
   height: 100%;
-  padding: 0px;
   overflow: hidden;
+  padding: 20px;
 }
 
 .viewCardBody {
