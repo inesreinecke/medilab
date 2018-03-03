@@ -10,10 +10,10 @@
           <div class="cardRow">
             <div class="card" v-for="(station) of Stations" v-bind:key="station.id" v-on:click="selectStation($event, station)">
               <div class="body" v-bind:style="{backgroundColor:station.bgColor}">
-                <p class="bodyText">{{station.title}}</p> 
+                <p class="bodyText">{{station.leader}}</p> 
               </div>
               <div class="footer">
-                <p class="footerText">{{station.leader}}</p> 
+                <p class="footerText">Station: {{station.title}}</p> 
               </div>
             </div>
           </div>  <!-- stations -->
@@ -21,15 +21,25 @@
           <!-- row for the rooms -->
           <div class="cardRow">
             <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click="selectRoom($event, room)">
-              <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
-                <h3><b>{{room.title}}</b></h3> 
+              <div class="body" v-bind:style="{backgroundColor:room.bgColor}">
+                <div class="bed" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click.stop="selectPatient($event, patient)">{{patient.patient.firstName + " " + patient.patient.lastName}}</div>
+              </div>
+              <div class="footer">
+                <p class="footerText">Room: {{room.title}}</p> 
+              </div>
 
-                <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click.stop="selectPatient($event, patient)">
+
+              <!-- <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
+                <h3><b>{{room.title}}</b></h3>  -->
+
+
+
+                <!-- <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click.stop="selectPatient($event, patient)">
                   <div class="avatar-circle">
                     <span class="initials">{{patient.patient.initials}}</span>
                   </div> 
-                </div>
-              </div>
+                </div> -->
+              <!-- </div> -->
             </div>
           </div> <!-- rooms -->
 
@@ -192,13 +202,13 @@ export default {
 
 /* Add some padding inside the card container */
 .card .body {
-    padding: 2px 16px;
+    padding: 5px;
     height:75%
 }
 
 .card .body .bodyText {
   margin-top:10px;
-  font-size: 20px;
+  font-size: 14px;
 }
 
 
@@ -259,5 +269,18 @@ export default {
     border: 0px solid black;
 }
 
+.bed {
+    position: relative;
+    padding: 3px;
+    margin: 3px;
+    border-radius: 5px;
+    background-color: rgba(255,255,255,0.4);
+    font-size: 14px;
+    border: 2px solid rgba(255,255,255,0)
+}
+
+.bed:hover {
+  border: 2px solid rgba(0,0,0,1)
+}
 
 </style>
