@@ -83,17 +83,6 @@ import gql from 'graphql-tag'
 import Datepicker from 'vuejs-datepicker'
 import moment from 'moment'
 
-// function isValidDate (dateString) {
-//   if (dateString != null) {
-//     var regEx = /^\d{4}-\d{2}-\d{2}$/
-//     if (!dateString.match(regEx)) return false
-//     var d = new Date(dateString)
-//     if (!d.getTime() && d.getTime() !== 0) return false
-//     return d.toISOString().slice(0, 10) === dateString
-//   }
-//   return false
-// }
-
 export default {
   name: 'sidebar',
   components: {
@@ -185,10 +174,9 @@ export default {
       })
     },
     isInvalidData: function () {
-      console.log(this.newPatient.birthday)
       if (!this.newPatient.firstName) return true
       if (!this.newPatient.lastName) return true
-      // if (!isValidDate(this.newPatient.birthday)) return true
+      if (!this.newPatient.birthday) return true
       if (!this.newPatient.sex) return true
       return false
     },
@@ -203,7 +191,7 @@ export default {
         variables: {
           firstName: this.newPatient.firstName,
           lastName: this.newPatient.lastName,
-          birthday: this.newPatient.birthday,
+          birthday: moment(this.newPatient.birthday).format('YYYY-MM-DD'),
           sex: this.newPatient.sex
         }
       }

@@ -1,39 +1,62 @@
 <template>
   <div id="app">
-    <heading></heading>    
-    <div class="landing">
-      <div class="secondHeading">
-        <div class="responsiveRow">
-          <div class="infoBox">
-            <h1>Welcome to MediLab !</h1>
-            this is a blabla app. Put some more descriptive text here
-          </div>
+    <!-- <heading></heading>   -->
 
-          <div class="loginBox">
-            <div class="row">
-              <div class="paramName">Username</div>
-              <input class="param" type="text" v-model="username">
-            </div>
-            <div class="row">
-              <div class="paramName">Password</div>
-              <input class="param" type="password" v-model="password">
-            </div>
-            <button class='button' v-on:click="doLogin()">Login!</button>
-          </div>
-        </div>
-      </div>
+    <b-jumbotron>
+      <b-container fluid>
+        <b-row>
+          <b-col xl="9" lg="8" md="6" sm="12">
+            <h2>Welcome to Medilab</h2>
+            <p>delivery for course xyz by Ines Reinecke</p>
+          </b-col>
+          <b-col xl="3" lg="4" md="6" sm="12">
+              <b-form-input v-model="username" type="text" placeholder="Username"></b-form-input>
+              <b-form-input v-model="password" type="password" placeholder="Password"></b-form-input>
+              <div class="embeddedLogin" @click="doLogin()">
+                <icon name="arrow-circle-o-right" scale="1.8"></icon>
+              </div>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-jumbotron>
 
-    </div>
+    <b-container flueid>
+      <b-row>
+        <b-col xl="auto" lg="auto" md="auto" sm="auto">
+          <b-carousel id="carousel1" style="text-shadow: 1px 1px 2px #333" controls indicators background="#ababab" :interval="7500" img-width="640" img-height="240" v-model="slide" @sliding-start="onSlideStart" @sliding-end="onSlideEnd">
+            <b-carousel-slide img-src="https://lorempixel.com/640/240/abstract/1/">
+              <h1>Hospital management</h1>
+            </b-carousel-slide>
+            <b-carousel-slide img-src="https://lorempixel.com/640/240/people/1/">
+              <h1></h1>
+            </b-carousel-slide>
+            <b-carousel-slide img-src="https://lorempixel.com/640/240/people/7/">
+              <h1>Hello world!</h1>
+          </b-carousel-slide>      
+          </b-carousel>
+        </b-col>
+        <b-col xl="auto" lg="auto" md="auto" sm="auto">
+          <p>For more information visit Github</p>
+          <b-btn variant="primary" target="_blank" href="https://github.com/inesreinecke/medilab">Sources on Github</b-btn>
+        </b-col>
+      </b-row>
+    </b-container>
+
+        <!-- <b-carousel-slide img-src="https://lorempixel.com/1024/480/people/7/"> -->
+
+
   </div>
 </template>
 
 <script>
 import Heading from '@/components/Heading'
+import Icon from 'vue-awesome/components/Icon'
 
 export default {
   name: 'landing',
   components: {
-    Heading
+    Heading,
+    Icon
   },
   data () {
     return {
@@ -77,34 +100,24 @@ export default {
   width: 25%
 }
 
-.row {
-    position: relative;
-    display: flex;
-    margin-bottom: 2px;
-    width: 100%;
+.embeddedLogin {
+  position: absolute;
+  top: 42px;
+  right: 20px;
+  width: 30px;
+  height: 100%;
+  border: inherit;
+  z-index: 5;
+  text-align: center;
+  line-height: 34px;
+  opacity: 0.5;
 }
 
-.paramName {
-  padding: 10px;
-  background: #a8a8a8;
-  width: 140px;
+.embeddedLogin:hover {
+  opacity: 0.75;
 }
 
-.param {
-  padding: 10px;
-  width: 100%
+::placeholder {
+  opacity: 0.5;
 }
-
-.button {
-    background-color: #4CAF50; 
-    border: none;
-    color: white;
-    width: 100%;
-    padding: 10px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 2px;
-}
-
 </style>

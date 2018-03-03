@@ -14,4 +14,6 @@ Used Libraries:
  * vueks-datepicker : https://github.com/charliekassel/vuejs-datepicker
  * modokdb : https://github.com/KaiWedekind/modokDB
  * momentJs : https://github.com/moment/moment
+ * bootstrap-vue : https://github.com/bootstrap-vue
+ * vue-awesome : https://github.com/Justineo/vue-awesome
  

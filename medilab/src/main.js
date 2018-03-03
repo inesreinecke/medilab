@@ -10,6 +10,11 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 
 import VueApollo from 'vue-apollo'
+import BootstrapVue from 'bootstrap-vue'
+
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'vue-awesome/icons'
 
 const uris = {
   dev: 'localhost:3000',
@@ -44,6 +49,7 @@ const apolloClient = new ApolloClient({
 })
 
 Vue.use(VueApollo)
+Vue.use(BootstrapVue)
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient
