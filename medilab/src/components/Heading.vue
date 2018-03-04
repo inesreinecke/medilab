@@ -5,9 +5,9 @@
         <div class="navContents" left>
           <router-link class="navElement" to="/stations">Stations</router-link>
           <router-link class="navElement" to="/patients">Patients</router-link>
-          <img class="avatar" src="static/img/img_avatar.png" v-if="isAuthenticated()" v-on:click="doLogout()">
+          <img class="avatar" src="static/img/img_avatar.png" v-if="isAuthenticated()" v-on:click="displayUserAvatarAction()">
         </div>
-      <img class="avatar" src="static/img/img_avatar.png" v-if="isAuthenticated()" v-on:click="doLogout()">
+      <!-- <img class="avatar" src="static/img/img_avatar.png" v-if="isAuthenticated()" v-on:click="doLogout()"> -->
     </header>
   </div>
 </template>
@@ -25,10 +25,8 @@ export default {
     console.log('header mounted')
   },
   methods: {
-    doLogout: function () {
-      console.log('logout')
-      localStorage.removeItem('isAuthenticated')
-      this.$router.push('/')
+    displayUserAvatarAction: function () {
+      this.$eventHub.$emit('userAvatar', {})
     },
     isAuthenticated: function () {
       return localStorage.getItem('isAuthenticated')

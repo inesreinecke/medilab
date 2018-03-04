@@ -2,10 +2,8 @@ const typeDefinitions = `
   
   type Patient {
     id: ID!
-    serial : String
     firstName: String
     lastName: String
-    initials: String
     birthday: String
     sex: String
   }
@@ -27,16 +25,17 @@ const typeDefinitions = `
 
   type Bed {
     id: ID!,
-    used : Boolean,
     room : Room,
     station: Station,
     patient: Patient
   }
 
+
   type Query {
     Welcome: String,
+    ResetDatabase : Boolean,
 
-    Patients : [Patient]
+    Patients : [Patient],
 
     Stations : [Station],
     StationById(id: ID!) : Station,
@@ -51,8 +50,8 @@ const typeDefinitions = `
   }
 
   type Mutation {
-    checkPatientIntoBed(_bedId: ID!, _patientId: ID!) : Boolean,
-    addNewPatient(firstName: String!, lastName: String!, birthday: String!, sex: String!) : [Patient]
+    checkPatientIntoBed(_stationId: ID!, _bedId: ID!, _patientId: ID!) : Boolean,
+    upsertPatient(id:ID!, firstName: String!, lastName: String!, birthday: String!, sex: String!) : Boolean
   }
 
   type Subscription {

@@ -69,7 +69,6 @@ export default {
             bgColor
             beds {
               id
-              used
               room {
                 id
                 title
@@ -80,10 +79,8 @@ export default {
               }
               patient {
                 id
-                serial
                 firstName
                 lastName
-                initials
                 birthday
                 sex
               }
@@ -91,7 +88,7 @@ export default {
           }
         }`,
         result ({data}) {
-          console.log(JSON.stringify(data.Rooms, null, 2))
+          console.log('received updated Rooms')
           this.Rooms = data.Rooms
         }
       }
@@ -133,7 +130,6 @@ export default {
             bgColor
             beds {
               id
-              used
               room {
                 id
                 title
@@ -144,10 +140,8 @@ export default {
               }
               patient {
                 id
-                serial
                 firstName
                 lastName
-                initials
                 birthday
                 sex
               }
