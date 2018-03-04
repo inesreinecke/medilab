@@ -4,9 +4,10 @@ const ROOMS_CHANGED = 'ROOMS_CHANGED';
 const PATIENTS_CHANGED = 'PATIENTS_CHANGED';
 
 const Modok = require('modokdb');
+const patientsDB = new Modok('patients');
 const stationsDB = new Modok('stations');
 const roomsDB = new Modok('rooms');
-const patientsDB = new Modok('patients');
+const bedsDB = new Modok('beds');
 
 
 /** 
@@ -14,100 +15,7 @@ const patientsDB = new Modok('patients');
  **/
 var resetDatabase = function() {
 
-  // reset Stations
-  stationsDB.deleteMany({});
-  stationsDB.insertMany(
-    [{
-      id: 1,
-      title: 'Innere Medizin',
-      bgColor: '#dc67ff',
-      leader: 'Dr. Habermann'
-    },
-    {
-      id: 2,
-      title: 'Intensivstation',
-      bgColor: '#79dd9a',
-      leader: 'Dr. Mustermann'
-    }]
-  );
-  console.log("resetted 'stations' on InMemoryDb");
-
-
-  roomsDB.deleteMany({});
-  roomsDB.insertMany([
-    {
-      id: 1,
-      _stationId: 1,
-      title: '1-001',
-      bgColor: '#dc67ff',
-      capacity: 4,
-      beds: [
-        {
-          id: 1,
-          used: true,
-          _patientId : 1
-        },
-        {
-          id: 2,
-          used: true,
-          _patientId : 2
-        },
-        {
-          id: 3,
-          used: false
-        },
-        {
-          id: 4,
-          used: false
-        }
-      ]
-    },
-    // {
-    //   id: 2,
-    //   _stationId: 1,
-    //   title: '1-002',
-    //   bgColor: '#dc67ff',
-    //   capacity: 4
-    // },
-    // {
-    //   id: 3,
-    //   _stationId: 1,
-    //   title: '1-003',
-    //   bgColor: '#dc67ff',
-    //   capacity: 2  
-    // },
-    // {
-    //   id: 4,
-    //   _stationId: 1,
-    //   title: '1-004',
-    //   bgColor: '#dc67ff',
-    //   capacity: 2
-    // },
-    // {
-    //   id: 5,
-    //   _stationId: 2,
-    //   title: '2-001',
-    //   bgColor: '#79dd9a',
-    //   capacity: 2
-    // },
-    // {
-    //   id: 6,
-    //   _stationId: 2,
-    //   title: '2-002',
-    //   bgColor: '#79dd9a',
-    //   capacity: 4
-    // },
-    // {
-    //   id: 7,
-    //   _stationId: 2,
-    //   title: '2-003',
-    //   bgColor: '#79dd9a',
-    //   capacity: 2
-    // }
-  ]);
-  console.log("resetted 'rooms' on InMemoryDb");
-
-
+  // resetting patients
   patientsDB.deleteMany({});
   patientsDB.insertMany([
     {
@@ -138,6 +46,119 @@ var resetDatabase = function() {
       sex: 'female'
     },
   ]);
+  console.log("resetted 'patients' on InMemoryDb");
+
+  // reset Stations
+  stationsDB.deleteMany({});
+  stationsDB.insertMany(
+    [{
+      id: 1,
+      title: 'Innere Medizin',
+      bgColor: '#dc67ff',
+      leader: 'Dr. Habermann'
+    },
+    {
+      id: 2,
+      title: 'Intensivstation',
+      bgColor: '#79dd9a',
+      leader: 'Dr. Mustermann'
+    }]
+  );
+  console.log("resetted 'stations' on InMemoryDb");
+
+  // resetting rooms
+  roomsDB.deleteMany({});
+  roomsDB.insertMany([
+    {
+      id: 1,
+      _stationId: 1,
+      title: '1-001',
+      bgColor: '#dc67ff'
+    },
+    // {
+    //   id: 2,
+    //   _stationId: 1,
+    //   title: '1-002',
+    //   bgColor: '#dc67ff'
+    // },
+    // {
+    //   id: 3,
+    //   _stationId: 1,
+    //   title: '1-003',
+    //   bgColor: '#dc67ff'
+    // },
+    // {
+    //   id: 4,
+    //   _stationId: 1,
+    //   title: '1-004',
+    //   bgColor: '#dc67ff'
+    // },
+    {
+      id: 5,
+      _stationId: 2,
+      title: '2-001',
+      bgColor: '#79dd9a'
+    },
+    // {
+    //   id: 6,
+    //   _stationId: 2,
+    //   title: '2-002',
+    //   bgColor: '#79dd9a'
+    // },
+    // {
+    //   id: 7,
+    //   _stationId: 2,
+    //   title: '2-003',
+    //   bgColor: '#79dd9a'
+    // }
+  ]);
+  console.log("resetted 'rooms' on InMemoryDb");
+
+  // reset Beds
+  bedsDB.deleteMany({});
+  bedsDB.insertMany([
+    {
+      id: 1,
+      used: true,
+      _roomId: 1,
+      _stationId: 1,
+      _patientId : 1
+    },
+    {
+      id: 2,
+      used: true,
+      _roomId: 1,
+      _stationId: 1,
+      _patientId : 2
+    },
+    {
+      id: 3,
+      _roomId: 1,
+      _stationId: 1,
+      used: false
+    },
+    {
+      id: 4,
+      _roomId: 1,
+      _stationId: 1,
+      used: false
+    },
+    {
+      id: 5,
+      _roomId: 5,
+      _stationId: 2,
+      used: false
+    },
+    {
+      id: 6,
+      _roomId: 5,
+      _stationId: 2,
+      used: false
+    }
+  ]
+  );
+  console.log("resetted 'beds' on InMemoryDb");
+
 
 };
 
@@ -145,43 +166,40 @@ var resetDatabase = function() {
  * getRoomsByStation - fetches the rooms that belong to a given query
  */
 var getRoomsByQuery = function(query) {
+  console.log("getRoomsByQuery: "+JSON.stringify(query))
   let roomResult = [];
   let roomsCache = roomsDB.find( query );
 
-  for (let origRoom of roomsCache) {
-    let room = JSON.parse(JSON.stringify(origRoom));
-
-    // enrich the beds with the patients
-    for(let x=0; x < room.beds.length; x++) {
-      let singleBed = room.beds[x];
-      if(singleBed._patientId != null) {
-        let patient = patientsDB.findOne( {id: Number(singleBed._patientId) } );
-        singleBed.patient = patient;
-      }
+  if(roomsCache != null) {
+    for (let origRoom of roomsCache) {
+      let room = JSON.parse(JSON.stringify(origRoom));
+      room.beds = getBedsByQuery( {_roomId: Number(room.id)} );
+      roomResult.push(room);
     }
-    roomResult.push(room);
   }
   return roomResult;
 };
 
-// /**
-//  * getAllocationsByRoom - fetches the allocations by given query
-//  */
-// var getAllocationsByQuery = function(query) {
-//   let allocationResult = [];
-//   let allocationCache = allocationsDB.find( query );
+/**
+ * getBedsByQuery - fetches the beds that belong to a given query
+ */
+var getBedsByQuery = function(query) {
+  console.log("getBedsByQuery: "+JSON.stringify(query))
+  let bedsResult = [];
+  let bedsCache = bedsDB.find( query );
 
-//   if(allocationCache != null) {
-//     for (let allocation of allocationCache) {
-//       let singleAllocation = JSON.parse(JSON.stringify(allocation));
-//       // lookup the patient and merge it into the allocation
-//       let singlePatient = patientsDB.findOne( {id : Number(singleAllocation._patientId)} );
-//       singleAllocation.patient = singlePatient;
-//       allocationResult.push(singleAllocation);
-//     }
-//     return allocationResult;
-//   }
-// };
+  if(bedsCache != null) {
+    for (let origBed of bedsCache) {
+      // enrich the beds with the room and station information
+      let singleBed = JSON.parse(JSON.stringify(origBed));
+      singleBed.room = roomsDB.findOne( {id: Number(singleBed._roomId)} );
+      singleBed.station = stationsDB.findOne( {id: Number(singleBed._stationId)} );
+      if(singleBed._patientId != null) singleBed.patient = patientsDB.findOne( {id: Number(singleBed._patientId)} );
+      bedsResult.push(singleBed);
+    }
+  }
+  return bedsResult;
+};
 
 
 module.exports = function () {
@@ -198,62 +216,69 @@ module.exports = function () {
       },
       /** returns one specific station given by its id */
       StationById (root, { id }) {
-        return stationsDB.findOne({ id: Number(id) });
+        return stationsDB.findOne( {id: Number(id)} );
       },
       /** returns all known rooms from roomsDB */
       Rooms () {
         return getRoomsByQuery( {} );
       },
-      /** returns one specific room given by its id */
+      /** returns rooms by the given station */
       RoomsByStation (root, {_stationId}) {
         return getRoomsByQuery( {_stationId: Number(_stationId) });
       },
+      /** returns one specific room given by its id */
+      RoomById (root, { id }) {
+        return getRoomsByQuery( {id: Number(id)} );
+      },
+      /** returns all known beds from bedsDB */
+      Beds () {
+        return getBedsByQuery( {} );
+      },
+      /** returns beds by the given room */
+      BedsByRoom (root, {_roomId}) {
+        return getRoomsByQuery( {_roomId: Number(_roomId) });
+      },
+      /** returns one specific bed given by its id */
+      BedById (root, { id }) {
+        return getBedsByQuery( {id: Number(id)} );
+      },
+      /** returns all known patiens from patiensDB */
       Patients () {
         return patientsDB.find( {} );
       }
 
     },
     Mutation: {
-      checkinPatient(root, {_stationId, _roomId, patientSerial }, { db }) {
+      checkPatientIntoBed(root, {_bedId, _patientId }) {
         let newAllocation = {};
+        console.log("checkPatientIntoBed _bedId="+_bedId+" _patientId="+_patientId);
 
         // first lookup the patient 
-        let localPatient = null;
-        for (let patient of patientsCache) {
-          if(patientSerial == patient.serial) {
-            localPatient = patient;
-          }
-        }
-        // console.log(JSON.stringify(localPatient));
+        let localPatient = patientsDB.findOne( {id:Number(_patientId)} );
+        let localBed = bedsDB.findOne( {id:Number(_bedId)} );
+
+ 
         if(localPatient != null) {
-          
-          // remove the patient from any maybe existing allocation
-          let id = 0;
-          for (let alloc of allocationCache) {
-            if(alloc.id >= id) id = alloc.id;
-            if(alloc.patientSerial == patientSerial) {
-              allocationCache = allocationCache.filter(patient => patient.patientSerial != patientSerial);
-            }
+          // remove the patient from any other bed
+          let patientQuery = {_patientId: Number(_patientId)};
+          let oldBedOfPatient = bedsDB.findOne( patientQuery);
+          if(oldBedOfPatient != null) {
+            delete oldBedOfPatient._patientId;
+            oldBedOfPatient.used = false;
+            bedsDB.updateOne( patientQuery, oldBedOfPatient);
           }
-          id += 1;
-          // only allocate the petient when a room was given, else dismiss the patient
-          if(_roomId != -1) {
-            newAllocation = {
-              id,
-              _stationId,
-              _roomId,
-              patientSerial,
-            };
-            allocationCache.push(newAllocation);
-            newAllocation.patient = localPatient;
+
+          // checkin patient into new bed (if a bed was given, otherwise dismiss patient)
+          if(localBed != null) {
+            localBed._patientId = _patientId;
+            bedsDB.updateOne( {id:Number(_bedId)}, localBed);
           }
+          else console.log("dismiss");
         }
+        pubsub.publish(ROOMS_CHANGED, {Rooms: getRoomsByQuery( {} )} );
 
-        let currentRoomsByStation = getRoomsByStation(_stationId);
-        console.log(currentRoomsByStation);
-        pubsub.publish(ROOMS_CHANGED, {Rooms: currentRoomsByStation});
-
-        return currentRoomsByStation;
+        return true;
+        // return currentRoomsByStation;
       },
       addNewPatient(root, {firstName, lastName, birthday, sex }, { db }) {
 

@@ -20,7 +20,7 @@
 
           <!-- row for the rooms -->
           <div class="cardRow">
-            <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click="selectRoom($event, room)">
+            <div class="card" v-for="(room) in Rooms" v-bind:key="room.id">
               <div class="body" v-bind:style="{backgroundColor:room.bgColor}">
                 <div class="bed" v-for="(bed) in room.beds" v-bind:key="bed.id" v-on:click.stop="selectBed($event, bed)">{{(bed.patient != null) ? (bed.patient.firstName + " " + bed.patient.lastName) : "-"}}</div>
               </div>
@@ -55,6 +55,7 @@ export default {
     return {
       Stations: [],
       Rooms: [],
+      selectedStation: {},
       selectedRoom: {}
     }
   },
@@ -66,15 +67,23 @@ export default {
             id
             title
             bgColor
-            capacity,
             beds {
               id
+              used
+              room {
+                id
+                title
+              }
+              station {
+                id
+                title
+              }
               patient {
                 id
                 serial
-                initials
                 firstName
                 lastName
+                initials
                 birthday
                 sex
               }
@@ -82,6 +91,7 @@ export default {
           }
         }`,
         result ({data}) {
+          console.log(JSON.stringify(data.Rooms, null, 2))
           this.Rooms = data.Rooms
         }
       }
@@ -109,6 +119,8 @@ export default {
   },
   methods: {
     selectStation: function (event, station) {
+      this.selectedStation = station
+
       // send event to sidebar
       this.$eventHub.$emit('station-selected', station)
 
@@ -119,15 +131,23 @@ export default {
             id
             title
             bgColor
-            capacity,
             beds {
               id
+              used
+              room {
+                id
+                title
+              }
+              station {
+                id
+                title
+              }
               patient {
                 id
                 serial
-                initials
                 firstName
                 lastName
+                initials
                 birthday
                 sex
               }
@@ -144,17 +164,8 @@ export default {
         console.error(error)
       })
     },
-    selectRoom: function (event, room) {
-      this.$eventHub.$emit('room-selected', room)
-    },
     selectBed: function (event, bed) {
-      console.log(bed)
-      // if (patient.patient != null) {
-      //   this.$eventHub.$emit('patient-selected', patient.patient)
-      // }
-      // else {
-      //   this.$eventHub.$emit('room-selected', this.selectedRoom)
-      // }
+      this.$eventHub.$emit('bed-selected', bed)
     }
   }
 }

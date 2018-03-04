@@ -31,36 +31,43 @@
       </div>
     </div>
 
-    <!-- Patient was selected -->
-    <div v-if="state === 'patient'">
-      <p class="heading">Patient: {{sidebarData.selectedPatient.firstName + " " + sidebarData.selectedPatient.lastName}}</p>
+    <!-- Bed was selected -->
+    <div v-if="state.startsWith('bed') == true">
+      <p class="heading">{{"Room " + sidebarData.selectedBed.room.title + ", Bed " + sidebarData.selectedBed.id}}</p>
 
-      <b-container fluid>
-        <b-row>
-          <b-col sm="4"><p class="ownLabel">Firstname</p></b-col>
-          <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.firstName" readonly></b-form-input></b-col>
-        </b-row>
-        <b-row>
-          <b-col sm="4"><p class="ownLabel">Lastname</p></b-col>
-          <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.lastName" readonly></b-form-input></b-col>
-        </b-row>
-        <b-row>
-          <b-col sm="4"><p class="ownLabel">Birthday</p></b-col>
-          <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.birthday" readonly></b-form-input></b-col>
-        </b-row>
-        <b-row>
-          <b-col sm="4"><p class="ownLabel">Sex</p></b-col>
-          <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.sex" readonly></b-form-input></b-col>
-        </b-row>
+      <div v-if="sidebarData.selectedBed.used == true">
+        <b-container fluid>
+          <b-row>
+            <b-col sm="4"><p class="ownLabel">Firstname</p></b-col>
+            <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.firstName" readonly></b-form-input></b-col>
+          </b-row>
+          <b-row>
+            <b-col sm="4"><p class="ownLabel">Lastname</p></b-col>
+            <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.lastName" readonly></b-form-input></b-col>
+          </b-row>
+          <b-row>
+            <b-col sm="4"><p class="ownLabel">Birthday</p></b-col>
+            <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.birthday" readonly></b-form-input></b-col>
+          </b-row>
+          <b-row>
+            <b-col sm="4"><p class="ownLabel">Sex</p></b-col>
+            <b-col sm="8"><b-form-input v-model="sidebarData.selectedPatient.sex" readonly></b-form-input></b-col>
+          </b-row>
+        </b-container>
 
-      </b-container>
+        <hr class="breaker">
+        <b-btn variant="primary" v-on:click="editPatient()">Edit Patient</b-btn>
+        <b-btn variant="danger" v-on:click="dismissPatient()">Dismiss Patient</b-btn>
+        
+      </div>
 
- 
-      <hr class="breaker">
-      <b-btn variant="primary" v-on:click="editPatient()">Edit Patient</b-btn>
-      <b-btn variant="danger" v-on:click="dismissPatient()">Dismiss Patient</b-btn>
+      <div v-if="sidebarData.selectedBed.used == false">
+        <b-btn variant="success" v-on:click="displayCheckin()">Checkin Patient</b-btn>
+      </div>
+
     </div>
 
+ 
     <!-- New Patient should be entered -->
     <div v-if="state === 'patientNew'">
       <p class="heading">New Patient</p>
@@ -107,6 +114,7 @@ export default {
       sidebarData: {
         selectedStation: null,
         selectedRoom: null,
+        selectedBed: null,
         selectedPatient: null
       },
       state: 'none',
@@ -132,9 +140,10 @@ export default {
       // console.log(item)
       this.state = 'room'
     })
-    this.$eventHub.$on('patient-selected', item => {
-      this.sidebarData.selectedPatient = item
-      this.state = 'patient'
+    this.$eventHub.$on('bed-selected', item => {
+      this.sidebarData.selectedBed = item
+      this.sidebarData.selectedPatient = (item.patient != null) ? JSON.parse(JSON.stringify(item.patient)) : null
+      this.state = 'bed'
     })
     this.$eventHub.$on('patient-new', item => {
       this.sidebarData.selectedPatient = null
@@ -218,15 +227,12 @@ export default {
     dismissPatient: function () {
       // fire mutation to checkIn the patient into the given station/room
       this.$apollo.mutate({
-        mutation: gql`mutation checkinPatient($_stationId:ID!, $_roomId:ID!, $patientSerial:String!) {
-          checkinPatient(_stationId: $_stationId, _roomId: $_roomId, patientSerial: $patientSerial) {
-            id
-          }
+        mutation: gql`mutation checkPatientIntoBed($_bedId:ID!, $_patientId:ID!) {
+          checkPatientIntoBed(_bedId: $_bedId, _patientId: $_patientId)
         }`,
         variables: {
-          _stationId: this.sidebarData.selectedStation.id,
-          _roomId: -1,
-          patientSerial: this.sidebarData.selectedPatient.serial
+          _bedId: -1,
+          _patientId: this.sidebarData.selectedPatient.id
         }
       }
       ).then(({data}) => {
