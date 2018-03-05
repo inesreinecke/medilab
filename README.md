@@ -1,6 +1,6 @@
 # medilab
 
-> MediLab - simple medical lab 
+> simple medical lab app to manage allocations in hospitals
 
 Web project using VueJS, GraphQL and Apollo to showcase a simple management app for a hospital. Allows to manage
 patients, rooms and stations with various exemplary use cases.
