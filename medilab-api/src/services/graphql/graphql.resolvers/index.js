@@ -69,48 +69,49 @@ var resetDatabase = function() {
       title: '1-001',
       bgColor: '#dc67ff'
     },
-    // {
-    //   id: 2,
-    //   _stationId: 1,
-    //   title: '1-002',
-    //   bgColor: '#dc67ff'
-    // },
-    // {
-    //   id: 3,
-    //   _stationId: 1,
-    //   title: '1-003',
-    //   bgColor: '#dc67ff'
-    // },
-    // {
-    //   id: 4,
-    //   _stationId: 1,
-    //   title: '1-004',
-    //   bgColor: '#dc67ff'
-    // },
+    {
+      id: 2,
+      _stationId: 1,
+      title: '1-002',
+      bgColor: '#dc67ff'
+    },
+    {
+      id: 3,
+      _stationId: 1,
+      title: '1-003',
+      bgColor: '#dc67ff'
+    },
+    {
+      id: 4,
+      _stationId: 1,
+      title: '1-004',
+      bgColor: '#dc67ff'
+    },
     {
       id: 5,
       _stationId: 2,
       title: '2-001',
       bgColor: '#79dd9a'
     },
-    // {
-    //   id: 6,
-    //   _stationId: 2,
-    //   title: '2-002',
-    //   bgColor: '#79dd9a'
-    // },
-    // {
-    //   id: 7,
-    //   _stationId: 2,
-    //   title: '2-003',
-    //   bgColor: '#79dd9a'
-    // }
+    {
+      id: 6,
+      _stationId: 2,
+      title: '2-002',
+      bgColor: '#79dd9a'
+    },
+    {
+      id: 7,
+      _stationId: 2,
+      title: '2-003',
+      bgColor: '#79dd9a'
+    }
   ]);
   console.log("resetted 'rooms' on InMemoryDb");
 
   // reset Beds
   bedsDB.drop();
   bedsDB.insertMany([
+    /** station1, room1, 4beds */
     {
       id: 1,
       _roomId: 1,
@@ -133,21 +134,119 @@ var resetDatabase = function() {
       _roomId: 1,
       _stationId: 1
     },
+    /** station1, room2, 4beds */
     {
       id: 5,
+      _roomId: 2,
+      _stationId: 1
+    },
+    {
+      id: 6,
+      _roomId: 2,
+      _stationId: 1
+    },
+    {
+      id: 7,
+      _roomId: 2,
+      _stationId: 1
+    },
+    {
+      id: 8,
+      _roomId: 2,
+      _stationId: 1
+    },
+    /** station1, room3, 2beds */
+    {
+      id: 9,
+      _roomId: 3,
+      _stationId: 1      
+    },
+    {
+      id: 10,
+      _roomId: 3,
+      _stationId: 1
+    },
+    /** station1, room4, 3beds */
+    {
+      id: 11,
+      _roomId: 4,
+      _stationId: 1      
+    },
+    {
+      id: 12,
+      _roomId: 4,
+      _stationId: 1
+    },
+    /** station2, room5, 4beds */
+    {
+      id: 13,
       _roomId: 5,
       _stationId: 2
     },
     {
-      id: 6,
+      id: 14,
       _roomId: 5,
+      _stationId: 2
+    },
+    {
+      id: 15,
+      _roomId: 5,
+      _stationId: 2
+    },
+    {
+      id: 16,
+      _roomId: 5,
+      _stationId: 2
+    },
+    /** station2, room6, 2beds */
+    {
+      id: 17,
+      _roomId: 6,
+      _stationId: 2
+    },
+    {
+      id: 18,
+      _roomId: 6,
+      _stationId: 2
+    },
+    /** station2, room7, 2beds */
+    {
+      id: 19,
+      _roomId: 7,
+      _stationId: 2
+    },
+    {
+      id: 20,
+      _roomId: 7,
       _stationId: 2
     }
   ]
   );
   console.log("resetted 'beds' on InMemoryDb");
+};
 
+var getStationsByQuery = function(query) {
+  // console.log("getRoomsByQuery: "+JSON.stringify(query))
+  let stationsResult = [];
+  let stationsCache = stationsDB.find( query );
 
+  if(stationsCache != null) {
+    for (let origStation of stationsCache) {
+      let station = JSON.parse(JSON.stringify(origStation));
+      let beds = getBedsByQuery( {_stationId: Number(station.id)} );
+      
+      let totalBeds = beds.length;
+      let usedBeds = 0;
+      // walk through all beds and count usage
+      for(let x=0; x < totalBeds; x++) {
+        if(beds[x]._patientId) usedBeds++;
+      }
+      station.bedMetrics = usedBeds + ' / ' + totalBeds;
+      station.utilization = Number((usedBeds/totalBeds)*100).toFixed(2) + ' %';
+      stationsResult.push(station);
+    }
+  }
+  return stationsResult;
 };
 
 /**
@@ -162,6 +261,16 @@ var getRoomsByQuery = function(query) {
     for (let origRoom of roomsCache) {
       let room = JSON.parse(JSON.stringify(origRoom));
       room.beds = getBedsByQuery( {_roomId: Number(room.id)} );
+
+      let totalBeds = room.beds.length;
+      let usedBeds = 0;
+      // walk through all beds and count usage
+      for(let x=0; x < totalBeds; x++) {
+        if(room.beds[x]._patientId) usedBeds++;
+      }
+      room.bedMetrics = usedBeds + ' / ' + totalBeds;
+      room.utilization = Number((usedBeds/totalBeds)*100).toFixed(2) + ' %';
+
       roomResult.push(room);
     }
   }
@@ -205,11 +314,11 @@ module.exports = function () {
       },
       /** returns all known stations from stationsDB */
       Stations () {
-        return stationsDB.find( {} );
+        return getStationsByQuery( {} );
       },
       /** returns one specific station given by its id */
       StationById (root, { id }) {
-        return stationsDB.findOne( {id: Number(id)} );
+        return getStationsByQuery( {id: Number(id)} );
       },
       /** returns all known rooms from roomsDB */
       Rooms () {

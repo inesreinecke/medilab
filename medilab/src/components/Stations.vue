@@ -20,7 +20,7 @@
 
           <!-- row for the rooms -->
           <div class="cardRow">
-            <div class="card" v-for="(room) in Rooms" v-bind:key="room.id">
+            <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click.stop="selectRoom($event, room)">
               <div class="body" v-bind:style="{backgroundColor:room.bgColor}">
                 <div class="bed" v-for="(bed) in room.beds" v-bind:key="bed.id" v-on:click.stop="selectBed($event, bed)">{{(bed.patient != null) ? (bed.patient.firstName + " " + bed.patient.lastName) : "-"}}</div>
               </div>
@@ -66,6 +66,8 @@ export default {
           Rooms {
             id
             title
+            bedMetrics
+            utilization
             bgColor
             beds {
               id
@@ -106,6 +108,8 @@ export default {
           title
           bgColor
           leader
+          bedMetrics
+          utilization
         }
       }`
     }).then(({data}) => {
@@ -127,6 +131,8 @@ export default {
           RoomsByStation(_stationId: $_stationId) {
             id
             title
+            bedMetrics
+            utilization
             bgColor
             beds {
               id
@@ -157,6 +163,9 @@ export default {
       }).catch((error) => {
         console.error(error)
       })
+    },
+    selectRoom: function (event, room) {
+      this.$eventHub.$emit('room-selected', room)
     },
     selectBed: function (event, bed) {
       this.$eventHub.$emit('bed-selected', bed)

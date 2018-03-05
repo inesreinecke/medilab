@@ -4,32 +4,36 @@
     <!-- Station was selected -->
     <div v-if="state === 'station'">
       <p class="heading">Station: {{sidebarData.selectedStation.title}}</p>
-      any activities applicable for a single Station would go here
+      <b-container fluid>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Leader</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedStation.leader" readonly></b-form-input></b-col>
+        </b-row>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Beds</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedStation.bedMetrics" readonly></b-form-input></b-col>
+        </b-row>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Utilization</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedStation.utilization" readonly></b-form-input></b-col>
+        </b-row>
+      </b-container>      
     </div>
 
     <!-- Room was selected -->
-    <!-- <div v-if="state.startsWith('room') == true">
+    <div v-if="state === 'room'">
       <p class="heading">Room: {{sidebarData.selectedRoom.title}}</p>
-      <div v-if="state === 'room'">
-
-        <b-input-group prepend="Capacity">
-          <b-form-input v-model="sidebarData.selectedRoom.capacity" readonly></b-form-input>
-        </b-input-group>
-
-        <hr class="breaker">
-        <b-btn variant="success" v-on:click="displayCheckin()">Checkin Patient</b-btn>
-      </div>
-
-      <div v-if="state === 'roomCheckin'">
-        <b-form-select v-model="selectedPatient" class="mb-3">
-          <template slot="first">
-            <option :value="null" disabled>Please select Patient...</option>
-          </template>
-          <option v-for="(patient) in Patients" v-bind:key="patient.id" v-bind:value="patient.serial">{{patient.firstName + " " + patient.lastName}}</option>
-        </b-form-select>
-        <b-btn variant="primary" v-on:click="executeCheckin()">Checkin!</b-btn>
-      </div>
-    </div> -->
+      <b-container fluid>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Beds</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedRoom.bedMetrics" readonly></b-form-input></b-col>
+        </b-row>
+        <b-row>
+          <b-col sm="4"><p class="ownLabel">Utilization</p></b-col>
+          <b-col sm="8"><b-form-input v-model="sidebarData.selectedRoom.utilization" readonly></b-form-input></b-col>
+        </b-row>
+      </b-container>  
+    </div>
 
     <!-- Bed was selected -->
     <div v-if="state.startsWith('bed') == true">
@@ -189,16 +193,15 @@ export default {
       this.state = 'none'
     })
     this.$eventHub.$on('station-selected', item => {
-      this.sidebarData.selectedStation = item
+      this.sidebarData.selectedStation = JSON.parse(JSON.stringify(item))
       this.state = 'station'
     })
     this.$eventHub.$on('room-selected', item => {
-      this.sidebarData.selectedRoom = item
-      // console.log(item)
+      this.sidebarData.selectedRoom = JSON.parse(JSON.stringify(item))
       this.state = 'room'
     })
     this.$eventHub.$on('bed-selected', item => {
-      this.sidebarData.selectedBed = item
+      this.sidebarData.selectedBed = JSON.parse(JSON.stringify(item))
       this.sidebarData.selectedPatient = (item.patient != null) ? JSON.parse(JSON.stringify(item.patient)) : null
       this.state = 'bed'
     })
@@ -253,6 +256,7 @@ export default {
       }
       ).then(({data}) => {
         this.pickedPatientId = null
+        this.state = 'none'
       }).catch((error) => {
         console.error(error)
       })

@@ -13,6 +13,8 @@ const typeDefinitions = `
     title: String
     bgColor: String
     leader: String
+    bedMetrics: String
+    utilization: String
   }
 
   type Room {
@@ -20,6 +22,8 @@ const typeDefinitions = `
     _stationId : ID!
     title: String
     bgColor: String
+    bedMetrics: String
+    utilization: String
     beds: [Bed]
   }
 

@@ -5,9 +5,8 @@
         <div class="navContents" left>
           <router-link class="navElement" to="/stations">Stations</router-link>
           <router-link class="navElement" to="/patients">Patients</router-link>
-          <img class="avatar" src="static/img/img_avatar.png" v-if="isAuthenticated()" v-on:click="displayUserAvatarAction()">
+          <img class="avatar" src="static/img/ines.avatar.png" v-if="isAuthenticated()" v-on:click="displayUserAvatarAction()">
         </div>
-      <!-- <img class="avatar" src="static/img/img_avatar.png" v-if="isAuthenticated()" v-on:click="doLogout()"> -->
     </header>
   </div>
 </template>

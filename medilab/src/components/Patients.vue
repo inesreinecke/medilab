@@ -93,7 +93,6 @@ export default {
   },
   methods: {
     selectPatient: function (patient, index) {
-      console.log(patient)
       this.$eventHub.$emit('patient-selected', patient)
     }
   }
