@@ -44,8 +44,11 @@ cd medilab/medilab
 npm run dev
 ```
 
-
-
- 
-Medilab comes with the GraphQL explorer engine GraphiQL:
+The backend is available at http://localhost:3000. Medilab also comes with a GraphQL API explorer engine powered by GraphiQL, available at 
 http://localhost:3000/graphiql
+
+The frontend is available at http://localhost:8090/
+
+Enjoy!
+
+
