@@ -20,6 +20,8 @@ Used Libraries:
 
 ### Installation
 
+Ensure node 9.7 is installed on your system to properly run modokdb: https://nodejs.org/en/download/current/
+
 Clone the repo and install the dependencies
 
 ```

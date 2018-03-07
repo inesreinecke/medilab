@@ -11,8 +11,6 @@ const configuration = require('@feathersjs/configuration');
 const express = require('@feathersjs/express');
 const socketio = require('@feathersjs/socketio');
 
-const passport = require('passport');
-const OpenIDConnectStrategy = require('passport-idaas-openidconnect').IDaaSOIDCStrategy;
 
 //app.disable('x-powered-by');
 
@@ -54,27 +52,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 
-app.use(passport.initialize());
-app.use(passport.session());
 
-const OpenIdStrategy = new OpenIDConnectStrategy(app.get('w3id'),
-  (iss, sub, profile, accessToken, refreshToken, params, done) => {
-    process.nextTick(() => {
-      const PROFILE = profile;
-      PROFILE.accessToken = accessToken;
-      PROFILE.refreshToken = refreshToken;
-      PROFILE.bluegroups = PROFILE._json.bluegroups;
-      done(null, PROFILE);
-    });
-  });
-
-passport.use(OpenIdStrategy);
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
 
 // Host the public folder
 app.use('/', express.static(app.get('public')));
