@@ -1,9 +1,11 @@
 const typeDefinitions = `
-  type Issue {
+  
+  type Patient {
     id: ID!
-    title: String
-    status: String
-    created_at: String
+    firstName: String
+    lastName: String
+    birthday: String
+    sex: String
   }
 
   type Station {
@@ -11,6 +13,8 @@ const typeDefinitions = `
     title: String
     bgColor: String
     leader: String
+    bedMetrics: String
+    utilization: String
   }
 
   type Room {
@@ -18,50 +22,43 @@ const typeDefinitions = `
     _stationId : ID!
     title: String
     bgColor: String
-    capacity: Int
-    allocation: [Allocation]
+    bedMetrics: String
+    utilization: String
+    beds: [Bed]
   }
 
-  type Patient {
-    id: ID!
-    serial : String!
-    firstName: String
-    lastName: String
-    initials: String
-    birthday: String
-    sex: String
-  }
-
-  type Allocation {
-    id: ID!
-    _stationId: ID!
-    _roomId: ID!
+  type Bed {
+    id: ID!,
+    room : Room,
+    station: Station,
     patient: Patient
   }
 
+
   type Query {
     Welcome: String,
-    Issues: [Issue],
+    ResetDatabase : Boolean,
+
+    Patients : [Patient],
 
     Stations : [Station],
-    StationById(id: ID!): Station,
+    StationById(id: ID!) : Station,
     
     Rooms : [Room],
-    RoomsByStation(_stationId: ID!): [Room],
+    RoomsByStation(_stationId: ID!) : [Room],
+    RoomById(id: ID!) : Room,
 
-    Allocation : [Allocation], 
-
-    Patients : [Patient]
+    Beds : [Bed],
+    BedsByRoom(_roomId: ID!) : Bed,
+    BedById(id: ID!) : Bed,
   }
 
   type Mutation {
-    addIssue(id: ID!, title: String!, status: String): Issue,
-    checkinPatient(_stationId: ID!, _roomId: ID!, patientSerial: String!): [Room],
-    addNewPatient(firstName: String!, lastName: String!, birthday: String!, sex: String!): [Patient]
+    checkPatientIntoBed(_stationId: ID!, _bedId: ID!, _patientId: ID!) : Boolean,
+    upsertPatient(id:ID!, firstName: String!, lastName: String!, birthday: String!, sex: String!) : Boolean
   }
 
   type Subscription {
-    Issues: [Issue],
     Rooms: [Room],
     Patients: [Patient]
   }

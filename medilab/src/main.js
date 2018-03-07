@@ -42,10 +42,22 @@ const link = split(
   httpLink
 )
 
+const apolloOptions = {
+  watchQuery: {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'ignore'
+  },
+  query: {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all'
+  }
+}
+
 const apolloClient = new ApolloClient({
   link,
   cache: new InMemoryCache(),
-  connectToDevTools: true
+  connectToDevTools: true,
+  defaultOptions: apolloOptions
 })
 
 Vue.use(VueApollo)

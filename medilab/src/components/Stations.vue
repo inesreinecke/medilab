@@ -20,26 +20,13 @@
 
           <!-- row for the rooms -->
           <div class="cardRow">
-            <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click="selectRoom($event, room)">
+            <div class="card" v-for="(room) in Rooms" v-bind:key="room.id" v-on:click.stop="selectRoom($event, room)">
               <div class="body" v-bind:style="{backgroundColor:room.bgColor}">
-                <div class="bed" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click.stop="selectPatient($event, patient)">{{patient.patient.firstName + " " + patient.patient.lastName}}</div>
+                <div class="bed" v-for="(bed) in room.beds" v-bind:key="bed.id" v-on:click.stop="selectBed($event, bed)">{{(bed.patient != null) ? (bed.patient.firstName + " " + bed.patient.lastName) : "-"}}</div>
               </div>
               <div class="footer">
                 <p class="footerText">Room: {{room.title}}</p> 
               </div>
-
-
-              <!-- <div class="full" v-bind:style="{backgroundColor:room.bgColor}">
-                <h3><b>{{room.title}}</b></h3>  -->
-
-
-
-                <!-- <div class="box" v-for="(patient) in room.allocation" v-bind:key="patient.id" v-on:click.stop="selectPatient($event, patient)">
-                  <div class="avatar-circle">
-                    <span class="initials">{{patient.patient.initials}}</span>
-                  </div> 
-                </div> -->
-              <!-- </div> -->
             </div>
           </div> <!-- rooms -->
 
@@ -67,37 +54,33 @@ export default {
   data () {
     return {
       Stations: [],
-      Rooms: []
+      Rooms: [],
+      selectedStation: {},
+      selectedRoom: {}
     }
   },
   apollo: {
     $subscribe: {
-      Issues: {
-        query: gql`subscription issues {
-          Issues {
-            id
-            title
-            status
-            created_at
-          }
-        }`,
-        result ({data}) {
-          this.Issues = data.Issues
-        }
-      },
       Rooms: {
         query: gql`subscription rooms {
           Rooms {
             id
             title
+            bedMetrics
+            utilization
             bgColor
-            capacity,
-            allocation {
+            beds {
               id
+              room {
+                id
+                title
+              }
+              station {
+                id
+                title
+              }
               patient {
                 id
-                serial
-                initials
                 firstName
                 lastName
                 birthday
@@ -107,6 +90,7 @@ export default {
           }
         }`,
         result ({data}) {
+          console.log('received updated Rooms')
           this.Rooms = data.Rooms
         }
       }
@@ -124,6 +108,8 @@ export default {
           title
           bgColor
           leader
+          bedMetrics
+          utilization
         }
       }`
     }).then(({data}) => {
@@ -134,6 +120,8 @@ export default {
   },
   methods: {
     selectStation: function (event, station) {
+      this.selectedStation = station
+
       // send event to sidebar
       this.$eventHub.$emit('station-selected', station)
 
@@ -143,14 +131,21 @@ export default {
           RoomsByStation(_stationId: $_stationId) {
             id
             title
+            bedMetrics
+            utilization
             bgColor
-            capacity,
-            allocation {
+            beds {
               id
+              room {
+                id
+                title
+              }
+              station {
+                id
+                title
+              }
               patient {
                 id
-                serial
-                initials
                 firstName
                 lastName
                 birthday
@@ -172,8 +167,8 @@ export default {
     selectRoom: function (event, room) {
       this.$eventHub.$emit('room-selected', room)
     },
-    selectPatient: function (event, patient) {
-      this.$eventHub.$emit('patient-selected', patient.patient)
+    selectBed: function (event, bed) {
+      this.$eventHub.$emit('bed-selected', bed)
     }
   }
 }
@@ -237,37 +232,6 @@ export default {
 }
 
 
-.avatar-circle {
-  width: 52px;
-  height: 52px;
-  background-color: #fff;
-  text-align: center;
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0)
-}
-
-
-.avatar-circle:hover {
-  border: 2px solid rgba(0,0,0,1)
-}
-
-.initials {
-  position: relative;
-  top: 12px; /* 25% of parent */
-  font-size: 25px; /* 50% of parent */
-  line-height: 25px; /* 50% of parent */
-  color: #000;
-  font-weight: bold;
-}
-
-.box {
-    box-sizing: border-box;
-    float: left;
-    padding: 5px;
-    border: 0px solid black;
-}
 
 .bed {
     position: relative;
