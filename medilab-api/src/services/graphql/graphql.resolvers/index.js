@@ -4,10 +4,10 @@ const ROOMS_CHANGED = 'ROOMS_CHANGED';
 const PATIENTS_CHANGED = 'PATIENTS_CHANGED';
 
 const Modok = require('modokdb');
-const patientsDB = new Modok('patients');
-const stationsDB = new Modok('stations');
-const roomsDB = new Modok('rooms');
-const bedsDB = new Modok('beds');
+const patientsCol = new Modok('patients');
+const stationsCol = new Modok('stations');
+const roomsCol = new Modok('rooms');
+const bedsCol = new Modok('beds');
 
 
 /** 
@@ -16,26 +16,26 @@ const bedsDB = new Modok('beds');
 var resetDatabase = function() {
 
   // resetting patients
-  patientsDB.drop();
-  patientsDB.insertMany([
+  patientsCol.drop();
+  patientsCol.insertMany([
     {
       id: 1,
-      firstName: 'Thomas',
-      lastName: 'Reinecke',
+      firstName: 'Max',
+      lastName: 'Mustermann',
       birthday: '1979-09-23',
       sex: 'male'
     },
     {
       id: 2,
-      firstName: 'Ines',
-      lastName: 'Reinecke',
+      firstName: 'Masine',
+      lastName: 'Musterfrau',
       birthday: '1981-01-05',
       sex: 'female'
     },
     {
       id: 3,
-      firstName: 'Anna',
-      lastName: 'Reinecke',
+      firstName: 'Ananas',
+      lastName: 'Musterkind',
       birthday: '2008-12-05',
       sex: 'female'
     },
@@ -43,8 +43,8 @@ var resetDatabase = function() {
   console.log("resetted 'patients' on InMemoryDb");
 
   // reset Stations
-  stationsDB.drop();
-  stationsDB.insertMany(
+  stationsCol.drop();
+  stationsCol.insertMany(
     [{
       id: 1,
       title: 'Innere Medizin',
@@ -61,8 +61,8 @@ var resetDatabase = function() {
   console.log("resetted 'stations' on InMemoryDb");
 
   // resetting rooms
-  roomsDB.drop();
-  roomsDB.insertMany([
+  roomsCol.drop();
+  roomsCol.insertMany([
     {
       id: 1,
       _stationId: 1,
@@ -109,8 +109,8 @@ var resetDatabase = function() {
   console.log("resetted 'rooms' on InMemoryDb");
 
   // reset Beds
-  bedsDB.drop();
-  bedsDB.insertMany([
+  bedsCol.drop();
+  bedsCol.insertMany([
     /** station1, room1, 4beds */
     {
       id: 1,
@@ -228,7 +228,7 @@ var resetDatabase = function() {
 var getStationsByQuery = function(query) {
   // console.log("getRoomsByQuery: "+JSON.stringify(query))
   let stationsResult = [];
-  let stationsCache = stationsDB.find( query );
+  let stationsCache = stationsCol.find( query );
 
   if(stationsCache != null) {
     for (let origStation of stationsCache) {
@@ -283,15 +283,15 @@ var getRoomsByQuery = function(query) {
 var getBedsByQuery = function(query) {
   // console.log("getBedsByQuery: "+JSON.stringify(query))
   let bedsResult = [];
-  let bedsCache = bedsDB.find( query );
+  let bedsCache = bedsCol.find( query );
 
   if(bedsCache != null) {
     for (let origBed of bedsCache) {
       // enrich the beds with the room and station information
       let singleBed = JSON.parse(JSON.stringify(origBed));
-      singleBed.room = roomsDB.findOne( {id: Number(singleBed._roomId)} );
-      singleBed.station = stationsDB.findOne( {id: Number(singleBed._stationId)} );
-      if(singleBed._patientId != null) singleBed.patient = patientsDB.findOne( {id: Number(singleBed._patientId)} );
+      singleBed.room = roomsCol.findOne( {id: Number(singleBed._roomId)} );
+      singleBed.station = stationsCol.findOne( {id: Number(singleBed._stationId)} );
+      if(singleBed._patientId != null) singleBed.patient = patientsCol.findOne( {id: Number(singleBed._patientId)} );
       bedsResult.push(singleBed);
     }
   }
@@ -312,7 +312,7 @@ module.exports = function () {
         resetDatabase();
         return true;
       },
-      /** returns all known stations from stationsDB */
+      /** returns all known stations from stationsCol */
       Stations () {
         return getStationsByQuery( {} );
       },
@@ -320,7 +320,7 @@ module.exports = function () {
       StationById (root, { id }) {
         return getStationsByQuery( {id: Number(id)} );
       },
-      /** returns all known rooms from roomsDB */
+      /** returns all known rooms from roomsCol */
       Rooms () {
         return getRoomsByQuery( {} );
       },
@@ -332,7 +332,7 @@ module.exports = function () {
       RoomById (root, { id }) {
         return getRoomsByQuery( {id: Number(id)} );
       },
-      /** returns all known beds from bedsDB */
+      /** returns all known beds from bedsCol */
       Beds () {
         return getBedsByQuery( {} );
       },
@@ -344,9 +344,9 @@ module.exports = function () {
       BedById (root, { id }) {
         return getBedsByQuery( {id: Number(id)} );
       },
-      /** returns all known patiens from patiensDB */
+      /** returns all known patiens from patiensCol */
       Patients () {
-        return patientsDB.find( {} );
+        return patientsCol.find( {} );
       }
 
     },
@@ -356,7 +356,7 @@ module.exports = function () {
 
         // first lookup the patient 
         let patientQuery = {_patientId: Number(_patientId)};
-        let localPatient = patientsDB.findOne( {id:Number(_patientId)} );
+        let localPatient = patientsCol.findOne( {id:Number(_patientId)} );
 
 
         // console.log('found patient: '+JSON.stringify(localPatient));
@@ -364,19 +364,19 @@ module.exports = function () {
           // remove the patient from any other bed
           // console.log('remove the patient from any other bed')
           
-          let oldBedOfPatient = bedsDB.findOne( patientQuery );
+          let oldBedOfPatient = bedsCol.findOne( patientQuery );
           // console.log('found old bed: '+JSON.stringify(oldBedOfPatient));
           if(oldBedOfPatient != null) {
             delete oldBedOfPatient._patientId;
-            bedsDB.updateOne( patientQuery, oldBedOfPatient);
+            bedsCol.updateOne( patientQuery, oldBedOfPatient);
           }
 
           // checkin patient into new bed (if a bed was given, otherwise dismiss patient)
           if(_bedId != -1) {
-            let localBed = bedsDB.findOne( {id:Number(_bedId)} );
+            let localBed = bedsCol.findOne( {id:Number(_bedId)} );
             if(localBed != null) {
               localBed._patientId = Number(_patientId);
-              bedsDB.updateOne( {id:Number(_bedId)}, localBed);
+              bedsCol.updateOne( {id:Number(_bedId)}, localBed);
             }
           }
           // else console.log('dismiss');
@@ -396,26 +396,26 @@ module.exports = function () {
           sex: sex
         };
 
-        // new patient : insert it into DB
+        // new patient : insert it into Col
         if (id == -1) {
           // find highest ID in db and increment by one
-          let allPatients = patientsDB.find( {} );
+          let allPatients = patientsCol.find( {} );
           let highestId = 0;
           for(let x=0; x < allPatients.length; x++) {
             if(allPatients[x].id > highestId) highestId = allPatients[x].id;
           }
           patient.id = (highestId+1)
-          patientsDB.insertOne(patient);
+          patientsCol.insertOne(patient);
         }
         // existing patient, ID is still the same, update record
         else {
-          patientsDB.updateOne( {id: patient.id}, patient);
+          patientsCol.updateOne( {id: patient.id}, patient);
         }
 
-        pubsub.publish(PATIENTS_CHANGED, {Patients: patientsDB.find( {} )});
+        pubsub.publish(PATIENTS_CHANGED, {Patients: patientsCol.find( {} )});
 
         // find out whether this patient is using a room
-        let usedBed = bedsDB.findOne( {_patientId: patient.id});
+        let usedBed = bedsCol.findOne( {_patientId: patient.id});
         if(usedBed != null) {
           pubsub.publish(ROOMS_CHANGED, {Rooms: getRoomsByQuery( {_stationId: Number(usedBed._stationId)} )} );
         }

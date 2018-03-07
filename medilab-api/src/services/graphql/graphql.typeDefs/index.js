@@ -62,7 +62,6 @@ const typeDefinitions = `
     Rooms: [Room],
     Patients: [Patient]
   }
-
   schema {
     query: Query
     mutation: Mutation
