@@ -38,7 +38,24 @@ if(process.env.NODE_ENV !== 'development') {
 }
 
 // Enable CORS, security, compression, favicon and body parsing
-app.use(cors());
+if(process.env.NODE_ENV !== 'development') {
+  app.enable('trust proxy');
+  app.use (function (req, res, next) {
+    if (req.secure) {
+      next();
+    } else {
+      res.redirect('https://' + req.headers.host + req.url);
+    }
+  });
+  const corsOptions = {
+    origin: 'https://medilab.mybluemix.net'
+  };
+  app.use(cors(corsOptions));
+} else {
+  app.use(cors());
+}
+
+
 app.use(helmet());
 app.use(compress());
 app.use(session({

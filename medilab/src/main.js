@@ -18,7 +18,7 @@ import 'vue-awesome/icons'
 
 const uris = {
   dev: 'localhost:3000',
-  prod: 'medilab.mybluemix.net'
+  prod: 'medilab-api.mybluemix.net'
 }
 
 const httpLink = new HttpLink({

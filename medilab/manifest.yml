@@ -1,8 +1,8 @@
 applications:
 - name: medilab
   random-route: false
-  memory: 1024M
+  memory: 512M
   domain: mybluemix.net
-  disk_quota: 1024M
+  disk_quota: 512M
   instances: 1
   buildpack: staticfile_buildpack
