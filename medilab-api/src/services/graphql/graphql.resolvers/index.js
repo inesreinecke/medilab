@@ -2,6 +2,7 @@ const { PubSub } = require('graphql-subscriptions');
 const pubsub = new PubSub();
 const ROOMS_CHANGED = 'ROOMS_CHANGED';
 const PATIENTS_CHANGED = 'PATIENTS_CHANGED';
+const STATIONS_CHANGED = 'STATIONS_CHANGED';
 
 const Modok = require('modokdb');
 const patientsCol = new Modok('patients');
@@ -255,7 +256,7 @@ var getStationsByQuery = function(query) {
 var getRoomsByQuery = function(query) {
   // console.log("getRoomsByQuery: "+JSON.stringify(query))
   let roomResult = [];
-  let roomsCache = roomsDB.find( query );
+  let roomsCache = roomsCol.find( query );
 
   if(roomsCache != null) {
     for (let origRoom of roomsCache) {
@@ -381,6 +382,7 @@ module.exports = function () {
           }
           // else console.log('dismiss');
         }
+        pubsub.publish(STATIONS_CHANGED, {Stations: getStationsByQuery( {} )} );
         pubsub.publish(ROOMS_CHANGED, {Rooms: getRoomsByQuery( {_stationId: Number(_stationId)} )} );
 
         return true;
@@ -428,6 +430,9 @@ module.exports = function () {
       },
       Patients: {
         subscribe: () => pubsub.asyncIterator(PATIENTS_CHANGED),
+      },
+      Stations: {
+        subscribe: () => pubsub.asyncIterator(STATIONS_CHANGED),
       }
     }
   };

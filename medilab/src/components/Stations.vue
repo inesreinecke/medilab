@@ -93,6 +93,24 @@ export default {
           console.log('received updated Rooms')
           this.Rooms = data.Rooms
         }
+      },
+      Stations: {
+        query: gql`subscription stations {
+          Stations {
+            id
+            title
+            bgColor
+            leader
+            bedMetrics
+            utilization
+          }
+        }`,
+        result ({data}) {
+          console.log('received updated Stations')
+          this.Stations = data.Stations
+          this.selectedStation = null
+          this.selectedRoom = null
+        }
       }
     }
   },
@@ -184,12 +202,12 @@ export default {
     width: 200px;
     height: 200px;
     margin: 10px;
-    border: 2px solid rgba(255,255,255,0);
+    border: 1px solid rgba(255,255,255,0);
 }
 
 /* On mouse-over, add a deeper shadow */
 .card:hover {
-  border: 2px solid rgba(0,0,0,1);
+  border: 1px solid #414c55;
   cursor: pointer;
 }
 
@@ -209,7 +227,7 @@ export default {
 
 .card .footer {
     padding: 2px 16px;
-    background-color: #202020;
+    background-color: #414c55;
     height:25%;
 }
 
@@ -219,7 +237,6 @@ export default {
     color: #fff;
     margin-top: 10px;
 }
-
 
 .card .full {
     padding: 2px 16px;
@@ -240,11 +257,11 @@ export default {
     border-radius: 5px;
     background-color: rgba(255,255,255,0.4);
     font-size: 14px;
-    border: 2px solid rgba(255,255,255,0)
+    border: 1px solid rgba(255,255,255,0)
 }
 
 .bed:hover {
-  border: 2px solid rgba(0,0,0,1)
+  border: 1px solid #414c55
 }
 
 </style>

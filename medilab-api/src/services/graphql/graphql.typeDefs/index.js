@@ -60,7 +60,8 @@ const typeDefinitions = `
 
   type Subscription {
     Rooms: [Room],
-    Patients: [Patient]
+    Patients: [Patient],
+    Stations: [Station]
   }
   schema {
     query: Query

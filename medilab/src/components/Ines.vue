@@ -7,7 +7,7 @@
                 <h2> Welcome to Ines component</h2>
                 <hr class="breaker">
                 <b-btn variant="primary" v-on:click="send('Ines')">Send Ines</b-btn>
-                <b-btn variant="primary" v-on:click="send('Thomas')">Send Thomas</b-btn>
+                <b-btn variant="primary" v-on:click="send('Tom')">Send Tom</b-btn>
             </div>
         </section>
         <mySidebar></mySidebar>

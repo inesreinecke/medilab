@@ -17,6 +17,7 @@ Used Libraries:
  * bootstrap-vue : https://github.com/bootstrap-vue
  * vue-awesome : https://github.com/Justineo/vue-awesome
  * graphiql : https://github.com/graphql/graphiql
+ * feathers: https://docs.feathersjs.com/
 
 ### Installation
 

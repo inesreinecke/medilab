@@ -242,7 +242,6 @@ export default {
       this.state = 'bed'
     },
     executeCheckin: function () {
-      this.state = 'room'
       // fire mutation to checkIn the patient into the given station/room
       this.$apollo.mutate({
         mutation: gql`mutation checkPatientIntoBed($_stationId:ID!, $_bedId:ID!, $_patientId:ID!) {

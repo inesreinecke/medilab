@@ -7,7 +7,7 @@
         Hallo Ines
     </div>
     <!-- Thomas was selected -->
-    <div v-if="buttonContext=='Thomas'">
+    <div v-if="buttonContext=='Tom'">
          <p class="heading">INES</p>
         Hallo Thomas
     </div>
@@ -40,7 +40,7 @@ export default {
     padding-right: 10px;
     top: 0;
     width: 400px;
-    background-color: rgb(213, 216, 219);
+    background-color: rgb(104, 175, 247);
     right: 0;
     z-index: 10;
     border-left: 0 solid #fff;

@@ -33,11 +33,11 @@ export default {
         {
           key: 'firstName',
           label: 'FirstName',
-          sortable: true
+          sortable: false
         },
         {
           key: 'lastName',
-          sortable: false
+          sortable: true
         },
         {
           key: 'birthday',
@@ -47,7 +47,7 @@ export default {
         {
           key: 'sex',
           label: 'Sex',
-          sortable: true
+          sortable: false
         }
       ],
       tableData: []
