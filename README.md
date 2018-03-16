@@ -7,7 +7,7 @@ patients, rooms and stations with various exemplary use cases.
 
 This project is divided into two pieces:
  * medilab : the actual UI element available at http://localhost:8080/
- * medilab-api : a backend service proving the API layer to serve Frontend capabilities and data
+ * medilab-api : a backend service proving the API layer to serve Frontend capabilities and data, http://localhost:3000
 
 Used Libraries:
  * vuejs : https://github.com/vuejs

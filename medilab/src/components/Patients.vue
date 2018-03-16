@@ -7,7 +7,6 @@
         <div class="viewCardBody">
 
           <b-table striped hover :items="tableData" :fields="fields" @row-clicked="selectPatient"></b-table>
-          <!-- <button class='button' v-on:click="addNewPatient()">Admit new Patient</button> -->
         
         </div>
       </section>
@@ -100,5 +99,16 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
+@media (max-width:500px){
+  td, th{ 
+    display: none;
+  }
+  
+  
+  th:nth-child(1), th:nth-child(2), td:nth-child(1), td:nth-child(2){
+    display: table-cell;
+  }
+
+}
 </style>

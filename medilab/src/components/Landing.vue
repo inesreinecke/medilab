@@ -6,8 +6,7 @@
       <b-container fluid>
         <b-row>
           <b-col xl="9" lg="8" md="6" sm="12">
-            <h2>Welcome to Medilab</h2>
-            <p>simple medical lab app to manage allocations in hospitals</p>
+            <h2>Welcome to my Medilab app</h2>
           </b-col>
           <b-col xl="3" lg="4" md="6" sm="12">
               <b-form-input v-model="username" type="text" placeholder="Username"></b-form-input>
@@ -37,9 +36,10 @@
           </b-carousel>
         </b-col>
         <b-col xl="6" lg="6" md="12" sm="12">
-          <p>This is the deliverable for course <i>xyz</i> from Ines Reinecke. This app 
-          <p>For more information visit Github</p>
+          <p>This is the deliverable for course <i>Projektarbeit Web-Engineering I</i> from Ines Reinecke. This Web Application is mainly to manage patients, stations and room allocation for a hospital.   
+          <p>For more information visit Github. The ReadMe contains all needed information to quickly setup up the environment and run the application. The app is also deployed on IBM Cloud/Bluemix.</p>
           <b-btn variant="primary" target="_blank" href="https://github.com/inesreinecke/medilab">Sources on Github</b-btn>
+          <b-btn variant="primary" target="_blank" href="https://medilab.mybluemix.net/">Access App on IBM Cloud</b-btn>
         </b-col>
       </b-row>
     </b-container>

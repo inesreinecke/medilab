@@ -1,6 +1,6 @@
 
 <template>
-  <div class="side">
+  <div class="side" v-bind:class="{ 'side--active':isOpen}">
     <!-- Station was selected -->
     <div v-if="state === 'station'">
       <p class="heading">Station: {{sidebarData.selectedStation.title}}</p>
@@ -23,6 +23,7 @@
     <!-- Room was selected -->
     <div v-if="state === 'room'">
       <p class="heading">Room: {{sidebarData.selectedRoom.title}}</p>
+      
       <b-container fluid>
         <b-row>
           <b-col sm="4"><p class="ownLabel">Beds</p></b-col>
@@ -112,6 +113,7 @@
       <div v-if="!editMode">
         <hr class="breaker">
         <b-btn variant="primary" v-on:click="editPatient()">Edit</b-btn>
+         <b-btn variant="danger" v-on:click="state='patientNew'">Cancel</b-btn>
       </div>
 
       <div v-if="editMode">
@@ -133,6 +135,10 @@
       <b-btn variant="danger" v-on:click="resetDB()">Reset Database</b-btn>
       <b-btn variant="primary" v-on:click="doLogout()">Logout</b-btn>
     </div>
+    <b-btn variant="secondary" class="btn-float" v-on:click="toggleSidebar()">
+      <svg v-if="!isOpen" width="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><path d="M360 48H40C18 48 0 66 0 88v224c0 22 18 40 40 40h320c22 0 40-18 40-40V88c0-22-18-40-40-40zM256 336H40c-13.2 0-24-10.8-24-24V88c0-13.2 10.8-24 24-24h216v272zm128-24c0 13.2-10.8 24-24 24h-88V64h88c13.2 0 24 10.8 24 24v224z"/><path d="M48 108h8c4.4 0 8-3.6 8-8s-3.6-8-8-8h-8c-4.4 0-8 3.6-8 8s3.6 8 8 8zM84 108h8c4.4 0 8-3.6 8-8s-3.6-8-8-8h-8c-4.4 0-8 3.6-8 8s3.6 8 8 8zM120 108h8c4.4 0 8-3.6 8-8s-3.6-8-8-8h-8c-4.4 0-8 3.6-8 8s3.6 8 8 8zM340 116h-28c-4.4 0-8 3.6-8 8s3.6 8 8 8h28c4.4 0 8-3.6 8-8s-3.6-8-8-8zM340 156h-28c-4.4 0-8 3.6-8 8s3.6 8 8 8h28c4.4 0 8-3.6 8-8s-3.6-8-8-8zM340 196h-28c-4.4 0-8 3.6-8 8s3.6 8 8 8h28c4.4 0 8-3.6 8-8s-3.6-8-8-8z"/></svg>
+      <svg v-if="isOpen" width="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><path d="M26 0C11.664 0 0 11.663 0 26s11.664 26 26 26 26-11.663 26-26S40.336 0 26 0zm0 50C12.767 50 2 39.233 2 26S12.767 2 26 2s24 10.767 24 24-10.767 24-24 24z"/><path d="M35.707 16.293a.999.999 0 0 0-1.414 0L26 24.586l-8.293-8.293a.999.999 0 1 0-1.414 1.414L24.586 26l-8.293 8.293a.999.999 0 1 0 1.414 1.414L26 27.414l8.293 8.293a.997.997 0 0 0 1.414 0 .999.999 0 0 0 0-1.414L27.414 26l8.293-8.293a.999.999 0 0 0 0-1.414z"/></svg>
+    </b-btn>
 
   </div>
 
@@ -156,6 +162,7 @@ export default {
         selectedBed: null,
         selectedPatient: null
       },
+      isOpen: false,
       editMode: false,
       state: 'none',
       pickedPatientId: null,
@@ -204,13 +211,16 @@ export default {
       this.sidebarData.selectedBed = JSON.parse(JSON.stringify(item))
       this.sidebarData.selectedPatient = (item.patient != null) ? JSON.parse(JSON.stringify(item.patient)) : null
       this.state = 'bed'
+      this.openSidebar()
     })
     this.$eventHub.$on('patient-selected', item => {
       this.sidebarData.selectedPatient = JSON.parse(JSON.stringify(item))
       this.state = 'patient'
+      this.openSidebar()
     })
     this.$eventHub.$on('patient-new', item => {
       this.state = 'patientNew'
+      this.openSidebar()
     })
     this.$eventHub.$on('userAvatar', item => {
       this.state = 'userAvatar'
@@ -235,6 +245,12 @@ export default {
     })
   },
   methods: {
+    toggleSidebar: function () {
+      this.isOpen = !this.isOpen
+    },
+    openSidebar: function () {
+      this.isOpen = true
+    },
     displayCheckin: function () {
       this.state = 'bedCheckin'
     },
@@ -327,7 +343,7 @@ export default {
     cancelPatientEdit: function () {
       this.editMode = false
       this.selectedPatient = null
-      this.state = 'none'
+      this.state = 'patientNew'
     },
     customFormatter (date) {
       return moment(date).format('YYYY-MM-DD')
@@ -371,6 +387,7 @@ export default {
     right: 0;
     z-index: 10;
     border-left: 0 solid #fff;
+    
 }
 
 .ownLabel {
@@ -409,6 +426,7 @@ textarea:focus, input:focus{
   border-radius: .25rem !important;
   border: 1px solid #ced4da !important;
   font-size: 1rem !important;
+  width: 100%;
 }
 
 
@@ -417,4 +435,35 @@ textarea:focus, input:focus{
   width: 280px !important;
 }
 
+.btn-float {
+  display: none;
+  background-color: #fff;
+}
+
+.btn-float:hover {
+  background-color: #EEE
+}
+
+@media(max-width:560px){
+  .side {
+    position: absolute;
+    width: 300px;
+    height: 100%;
+    top: 0;
+    right: -300px;
+    z-index: 2;
+    transition: right 0.3s ease-in-out;
+  }
+
+  .side--active {
+    right: 0px;
+  }
+
+  .btn-float {
+    display: inline-flex;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+  }
+}
 </style>

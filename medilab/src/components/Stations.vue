@@ -264,4 +264,11 @@ export default {
   border: 1px solid #414c55
 }
 
+
+@media(max-width:500px){
+  .card {
+    width: 100%;
+  }
+}
+
 </style>
