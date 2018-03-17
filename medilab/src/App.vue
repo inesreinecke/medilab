@@ -71,7 +71,7 @@ body {
 }
 
 /** styles for phone and tablet sized devices **/
-@media (min-width: 768px) {
+@media (min-width: 576px) {
   #app {
     display: flex;
   }

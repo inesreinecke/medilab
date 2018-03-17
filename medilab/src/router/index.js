@@ -9,7 +9,6 @@ import Patients from '@/components/Patients'
 Vue.use(VueRouter)
 
 export default new VueRouter({
-  mode: 'history',
   routes: [
     {
       path: '/',
