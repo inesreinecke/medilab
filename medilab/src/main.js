@@ -11,6 +11,7 @@ import { getMainDefinition } from 'apollo-utilities'
 
 import VueApollo from 'vue-apollo'
 import BootstrapVue from 'bootstrap-vue'
+import VueYouTubeEmbed from 'vue-youtube-embed'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -62,6 +63,7 @@ const apolloClient = new ApolloClient({
 
 Vue.use(VueApollo)
 Vue.use(BootstrapVue)
+Vue.use(VueYouTubeEmbed)
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient
