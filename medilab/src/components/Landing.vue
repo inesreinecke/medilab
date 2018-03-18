@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- <heading></heading>   -->
-
     <b-jumbotron>
       <b-container fluid>
         <b-row>
@@ -21,11 +19,25 @@
   
     <b-container flueid>
       <b-row>
-        <b-col>
-         <div class="container">
-          <iframe src="//www.youtube.com/embed/PmVNQo3lXvc?rel=0" 
-          frameborder="0" allowfullscreen class="video"></iframe>
-      </div>
+        <b-col xl="6" lg="6" md="12" sm="12">
+          <!-- you can add my YouTube introduction video instead of the rotating pictures, simply use the following instead:
+          <div class="container">
+            <iframe src="//www.youtube.com/embed/PmVNQo3lXvc?rel=0" 
+            frameborder="0" allowfullscreen class="video"></iframe>
+          </div>
+          -->
+          <b-carousel id="carousel1" style="text-shadow: 1px 1px 2px #333" controls indicators background="#ababab" :interval="6000" img-width="640" img-height="400">
+            <b-carousel-slide img-src="static/img/1.jpg">
+              <h3>hospital allocation management</h3>
+            </b-carousel-slide>
+            <b-carousel-slide img-src="static/img/7.jpg">
+              <h3>patient management</h3>
+            </b-carousel-slide>
+            <b-carousel-slide img-src="static/img/2.jpg">
+              <h3>latest webapp standards</h3>
+              <p>VueJs, GraphQL, Bootstrap, Webpack, NodeJs, Cloudant</p>
+          </b-carousel-slide>      
+          </b-carousel>
         </b-col>
         <b-col xl="6" lg="6" md="12" sm="12">
           <p>This is the deliverable for course <i>Projektarbeit Web-Engineering I</i> from Ines Reinecke. This Web Application is mainly to manage patients, stations and room allocation for a hospital.   
