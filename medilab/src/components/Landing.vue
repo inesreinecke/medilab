@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main-welcome">
     <b-jumbotron>
       <b-container fluid>
         <b-row>
@@ -83,6 +83,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
+.main-welcome {
+  overflow-y: auto;
+}
 .secondHeading {
   background: #ededed;
   width:100%;
