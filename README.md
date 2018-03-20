@@ -55,6 +55,12 @@ https://www.youtube.com/watch?v=PmVNQo3lXvc&feature=youtu.be
 To ensure the application is also running without internet connection locally, I decided to not include the YouTube Video.
 If you want to add the video, simply change the code in Landing.vue. I already added the code to get the Video included instead of the pictures. 
 
+### Reference
+
+I have used the following article/tutorial to have graphql and as a service of my medilab-api project:https://medium.com/@wedekind.kai/rest-in-peace-long-live-graphql-f53e269c466d
+
+I have used another tutorial to fetch the data from my API server via Apollo Client 2.0: https://medium.com/@wedekind.kai/data-fetching-with-apollo-client-2-0-d52a30eee63c
+
 
 The backend is available at http://localhost:3000. Medilab also comes with a GraphQL API explorer engine powered by GraphiQL, available at 
 http://localhost:3000/graphiql
