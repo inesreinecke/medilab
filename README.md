@@ -65,6 +65,7 @@ To setup my global event bus in my vue app, I have used the following tutoral:
 https://medium.com/vuejobs/create-a-global-event-bus-in-vue-js-838a5d9ab03a
 
 
+### App access
 The backend is available at http://localhost:3000. Medilab also comes with a GraphQL API explorer engine powered by GraphiQL, available at 
 http://localhost:3000/graphiql
 
